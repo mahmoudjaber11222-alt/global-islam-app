@@ -1,4 +1,9 @@
-import App from '../App';
-export default function Index() {
-  return <App />;
+import { Text, View } from 'react-native';
+import '../global.css';
+export default function App() {
+  return (
+    <View>
+      <Text className="text-red-600">Hello expo</Text>
+    </View>
+  );
 }
