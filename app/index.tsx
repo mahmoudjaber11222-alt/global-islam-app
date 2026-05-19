@@ -2,8 +2,8 @@ import { Text, View } from 'react-native';
 import '../global.css';
 export default function App() {
   return (
-    <View>
-      <Text className="text-red-600">Hello expo</Text>
+    <View className="w-full h-full bg-gray-300 flex items-center justify-center ">
+      <Text className="text-black text-xl font-bold ">Welcome, to expo</Text>
     </View>
   );
 }
