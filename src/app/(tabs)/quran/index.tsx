@@ -1,78 +1,245 @@
+import useLanguage from '@/src/hooks/useLanguage';
+import useStaticText from '@/src/hooks/useStaticText';
+import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import { FlatList, Image, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import surahs from '../../../../assets/Static Data/Surahs Names';
+import { getThemeColors } from '../../../constants/theme';
+import { useAppTheme } from '../../../context/ThemeProvider';
 
-const MACAIAN_IMG_URL =
-  'https://travilia.com/uploads/0000/8/2024/09/26/hajj-rituals-makkah-accorhotels.jpg';
-const MADANIAN_IMG_URL =
-  'https://arab-j.net/uploads/images/2021/12/21/AR22.JPG';
+interface Surah {
+  id: string;
+  number: number;
+  name: string;
+  arabicName: string;
+  verses: number;
+  revelation: 'Meccan' | 'Medinan';
+  startsPage: number;
+}
 
-function SurahCard({
-  startsPage = 0,
-  onPress = (): void => {},
-  uri = '',
-  enName = '',
-  arName = '',
-  index = '',
-  verses = 0,
-}) {
+function SurahCard({ surah, onPress }: { surah: Surah; onPress: () => void }) {
+  const { theme } = useAppTheme();
+  const c = getThemeColors(theme);
+  const isMeccan = surah.revelation === 'Meccan';
+  const { translatedText } = useStaticText();
   return (
     <Pressable
       onPress={onPress}
-      className="flex-row items-center justify-between px-4 py-3 bg-white  border border-gray-100 shadow-sm"
+      className="flex-row items-center px-5 py-4 border-b active:opacity-80"
+      style={{
+        backgroundColor: c.surface,
+        borderColor: c.border,
+      }}
     >
-      {/* Left: Number */}
-      <Text className="w-10 text-center text-gray-500 font-semibold">
-        {startsPage}
-      </Text>
-
-      {/* Middle: Main content */}
-      <View className="flex-1 flex-row items-center gap-3">
-        {/* Icon */}
-        <Image source={{ uri }} className="w-10 h-10 rounded-full" />
-
-        {/* Text block */}
-        <View className="flex-1">
-          <Text className="text-gray-900 font-semibold">{enName}</Text>
-          <Text className="text-gray-500 text-xs">{verses} verses</Text>
-        </View>
-
-        {/* Arabic name */}
-        <Text className="text-gray-700 font-arabic text-right">{arName}</Text>
+      {/* Left: Surah Number Badge */}
+      <View
+        className="w-11 h-11 rounded-xl border items-center justify-center mr-4"
+        style={{ backgroundColor: c.surface2, borderColor: c.border2 }}
+      >
+        <Text
+          className="text-[13px] font-bold tracking-wide"
+          style={{ color: c.accent }}
+        >
+          {surah.number}
+        </Text>
       </View>
 
-      {/* Right: Index */}
-      <Text className="w-12 text-right text-gray-400 text-xs">{index}</Text>
+      {/* Middle: Names & Info */}
+      <View className="flex-1">
+        <View className="flex-row items-center gap-2 mb-1">
+          <Text
+            className="text-[15px] font-semibold tracking-wide"
+            style={{ color: c.primary }}
+          >
+            {surah.name}
+          </Text>
+          <View
+            className="px-2 py-0.5 rounded"
+            style={{
+              backgroundColor: isMeccan ? c.surface3 : c.surface5,
+            }}
+          >
+            <Text
+              className="text-[10px] font-bold tracking-[1px] uppercase"
+              style={{
+                color: isMeccan ? c.accent : c.success,
+              }}
+            >
+              {isMeccan
+                ? translatedText?.quranApp?.meccan
+                : translatedText?.quranApp?.medinan}
+            </Text>
+          </View>
+        </View>
+        <Text
+          className="text-[12px] font-normal tracking-wide"
+          style={{ color: c.tertiary }}
+        >
+          {surah.verses} {translatedText?.other?.verse} ·{' '}
+          {translatedText?.other?.page} {surah.startsPage}
+        </Text>
+      </View>
+
+      {/* Right: Arabic Name */}
+      <View className="items-end">
+        <Text
+          className="text-[18px] font-light tracking-[1px]"
+          style={{ color: c.primary }}
+        >
+          {surah.arabicName}
+        </Text>
+      </View>
+
+      {/* Chevron */}
+      <Ionicons
+        name="chevron-forward"
+        size={16}
+        color={c.quinary}
+        className="ml-3"
+      />
     </Pressable>
   );
 }
-function handleSurahClick(item = { number: 0 }): void {
-  console.log(item);
-  router.push(`/quran/${item?.number}`);
-}
-export default function QuranSurah() {
+
+function SectionHeader({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle: string;
+}) {
+  const { theme } = useAppTheme();
+  const c = getThemeColors(theme);
+  const { selectedLanguage } = useLanguage();
   return (
-    <>
+    <View
+      style={{ direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' }}
+      className="px-5 pt-8 pb-4"
+    >
+      <Text
+        className="text-2xl font-light tracking-wide"
+        style={{ color: c.primary }}
+      >
+        {subtitle}
+      </Text>
+      <Text
+        className="text-[11px] font-bold tracking-[2.5px] uppercase mb-1"
+        style={{ color: c.tertiary }}
+      >
+        {title}
+      </Text>
+    </View>
+  );
+}
+
+function StatsBar({
+  totalSurahs,
+  meccanCount,
+  medinanCount,
+}: {
+  totalSurahs: number;
+  meccanCount: number;
+  medinanCount: number;
+}) {
+  const { theme } = useAppTheme();
+  const c = getThemeColors(theme);
+  const { translatedText } = useStaticText();
+  return (
+    <View className="flex-row gap-3 px-5 mb-6">
+      <View
+        className="flex-1 rounded-xl border p-4 items-center"
+        style={{ backgroundColor: c.surface, borderColor: c.border }}
+      >
+        <Text
+          className="text-[24px] font-extralight tabular-nums"
+          style={{ color: c.accent }}
+        >
+          {totalSurahs}
+        </Text>
+        <Text
+          className="text-[10px] font-bold tracking-[1.5px] mt-1 uppercase"
+          style={{ color: c.tertiary }}
+        >
+          {translatedText?.other?.chapter}
+        </Text>
+      </View>
+      <View
+        className="flex-1 rounded-xl border p-4 items-center"
+        style={{ backgroundColor: c.surface, borderColor: c.border }}
+      >
+        <Text
+          className="text-[24px] font-extralight tabular-nums"
+          style={{ color: c.accent }}
+        >
+          {meccanCount}
+        </Text>
+        <Text
+          className="text-[10px] font-bold tracking-[1.5px] mt-1 uppercase"
+          style={{ color: c.tertiary }}
+        >
+          {translatedText?.quranApp?.meccan}
+        </Text>
+      </View>
+      <View
+        className="flex-1 rounded-xl border p-4 items-center"
+        style={{ backgroundColor: c.surface, borderColor: c.border }}
+      >
+        <Text
+          className="text-[24px] font-extralight tabular-nums"
+          style={{ color: c.success }}
+        >
+          {medinanCount}
+        </Text>
+        <Text
+          className="text-[10px] font-bold tracking-[1.5px] mt-1 uppercase"
+          style={{ color: c.tertiary }}
+        >
+          {translatedText?.quranApp?.medinan}
+        </Text>
+      </View>
+    </View>
+  );
+}
+
+function handleSurahClick(item: Surah): void {
+  router.push(`/quran/${item.number}`);
+}
+
+export default function QuranSurah() {
+  const { theme } = useAppTheme();
+  const c = getThemeColors(theme);
+  const { translatedText } = useStaticText();
+  const meccanCount = surahs.filter(
+    (s: Surah) => s.revelation === 'Meccan',
+  ).length;
+  const medinanCount = surahs.filter(
+    (s: Surah) => s.revelation === 'Medinan',
+  ).length;
+
+  return (
+    <View className="flex-1" style={{ backgroundColor: c.background }}>
+      {/* Header */}
+      <SectionHeader
+        subtitle={translatedText?.quran?.header?.title}
+        title={translatedText?.quran?.header?.subtitle}
+      />
+
+      {/* Stats */}
+      <StatsBar
+        totalSurahs={surahs.length}
+        meccanCount={meccanCount}
+        medinanCount={medinanCount}
+      />
+
+      {/* Surah List */}
       <FlatList
         data={surahs}
         keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
-          <SurahCard
-            uri={
-              item.revelation === 'Meccan' ? MACAIAN_IMG_URL : MADANIAN_IMG_URL
-            }
-            onPress={() => {
-              handleSurahClick(item);
-            }}
-            arName={item.arabicName}
-            enName={item.name}
-            index={item.id}
-            verses={item.verses}
-            startsPage={item.startsPage}
-          />
+          <SurahCard surah={item} onPress={() => handleSurahClick(item)} />
         )}
       />
-      {/* <Text className="text-red-600">Quran Screen</Text> */}
-    </>
+    </View>
   );
 }

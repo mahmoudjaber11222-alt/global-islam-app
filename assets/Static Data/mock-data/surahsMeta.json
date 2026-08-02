@@ -1,0 +1,686 @@
+[
+  {
+    "surahNumber": 1,
+    "surahName": "Al-Fatiha",
+    "pageInQuran": 1,
+    "numberOfVerses": 7
+  },
+  {
+    "surahNumber": 2,
+    "surahName": "Al-Baqarah",
+    "pageInQuran": 2,
+    "numberOfVerses": 286
+  },
+  {
+    "surahNumber": 3,
+    "surahName": "Aal-E-Imran",
+    "pageInQuran": 50,
+    "numberOfVerses": 200
+  },
+  {
+    "surahNumber": 4,
+    "surahName": "An-Nisa",
+    "pageInQuran": 77,
+    "numberOfVerses": 176
+  },
+  {
+    "surahNumber": 5,
+    "surahName": "Al-Ma'idah",
+    "pageInQuran": 106,
+    "numberOfVerses": 120
+  },
+  {
+    "surahNumber": 6,
+    "surahName": "Al-An'am",
+    "pageInQuran": 128,
+    "numberOfVerses": 165
+  },
+  {
+    "surahNumber": 7,
+    "surahName": "Al-A'raf",
+    "pageInQuran": 151,
+    "numberOfVerses": 206
+  },
+  {
+    "surahNumber": 8,
+    "surahName": "Al-Anfal",
+    "pageInQuran": 177,
+    "numberOfVerses": 75
+  },
+  {
+    "surahNumber": 9,
+    "surahName": "At-Tawbah",
+    "pageInQuran": 187,
+    "numberOfVerses": 129
+  },
+  {
+    "surahNumber": 10,
+    "surahName": "Yunus",
+    "pageInQuran": 208,
+    "numberOfVerses": 109
+  },
+  {
+    "surahNumber": 11,
+    "surahName": "Hud",
+    "pageInQuran": 221,
+    "numberOfVerses": 123
+  },
+  {
+    "surahNumber": 12,
+    "surahName": "Yusuf",
+    "pageInQuran": 235,
+    "numberOfVerses": 111
+  },
+  {
+    "surahNumber": 13,
+    "surahName": "Ar-Ra'd",
+    "pageInQuran": 249,
+    "numberOfVerses": 43
+  },
+  {
+    "surahNumber": 14,
+    "surahName": "Ibrahim",
+    "pageInQuran": 255,
+    "numberOfVerses": 52
+  },
+  {
+    "surahNumber": 15,
+    "surahName": "Al-Hijr",
+    "pageInQuran": 262,
+    "numberOfVerses": 99
+  },
+  {
+    "surahNumber": 16,
+    "surahName": "An-Nahl",
+    "pageInQuran": 267,
+    "numberOfVerses": 128
+  },
+  {
+    "surahNumber": 17,
+    "surahName": "Al-Isra",
+    "pageInQuran": 282,
+    "numberOfVerses": 111
+  },
+  {
+    "surahNumber": 18,
+    "surahName": "Al-Kahf",
+    "pageInQuran": 293,
+    "numberOfVerses": 110
+  },
+  {
+    "surahNumber": 19,
+    "surahName": "Maryam",
+    "pageInQuran": 305,
+    "numberOfVerses": 98
+  },
+  {
+    "surahNumber": 20,
+    "surahName": "Ta-Ha",
+    "pageInQuran": 312,
+    "numberOfVerses": 135
+  },
+  {
+    "surahNumber": 21,
+    "surahName": "Al-Anbiya",
+    "pageInQuran": 322,
+    "numberOfVerses": 112
+  },
+  {
+    "surahNumber": 22,
+    "surahName": "Al-Hajj",
+    "pageInQuran": 332,
+    "numberOfVerses": 78
+  },
+  {
+    "surahNumber": 23,
+    "surahName": "Al-Mu'minun",
+    "pageInQuran": 342,
+    "numberOfVerses": 118
+  },
+  {
+    "surahNumber": 24,
+    "surahName": "An-Nur",
+    "pageInQuran": 350,
+    "numberOfVerses": 64
+  },
+  {
+    "surahNumber": 25,
+    "surahName": "Al-Furqan",
+    "pageInQuran": 359,
+    "numberOfVerses": 77
+  },
+  {
+    "surahNumber": 26,
+    "surahName": "Ash-Shu'ara",
+    "pageInQuran": 367,
+    "numberOfVerses": 227
+  },
+  {
+    "surahNumber": 27,
+    "surahName": "An-Naml",
+    "pageInQuran": 377,
+    "numberOfVerses": 93
+  },
+  {
+    "surahNumber": 28,
+    "surahName": "Al-Qasas",
+    "pageInQuran": 385,
+    "numberOfVerses": 88
+  },
+  {
+    "surahNumber": 29,
+    "surahName": "Al-Ankabut",
+    "pageInQuran": 396,
+    "numberOfVerses": 69
+  },
+  {
+    "surahNumber": 30,
+    "surahName": "Ar-Rum",
+    "pageInQuran": 404,
+    "numberOfVerses": 60
+  },
+  {
+    "surahNumber": 31,
+    "surahName": "Luqman",
+    "pageInQuran": 411,
+    "numberOfVerses": 34
+  },
+  {
+    "surahNumber": 32,
+    "surahName": "As-Sajda",
+    "pageInQuran": 415,
+    "numberOfVerses": 30
+  },
+  {
+    "surahNumber": 33,
+    "surahName": "Al-Ahzab",
+    "pageInQuran": 418,
+    "numberOfVerses": 73
+  },
+  {
+    "surahNumber": 34,
+    "surahName": "Saba",
+    "pageInQuran": 428,
+    "numberOfVerses": 54
+  },
+  {
+    "surahNumber": 35,
+    "surahName": "Fatir",
+    "pageInQuran": 434,
+    "numberOfVerses": 45
+  },
+  {
+    "surahNumber": 36,
+    "surahName": "Ya-Sin",
+    "pageInQuran": 440,
+    "numberOfVerses": 83
+  },
+  {
+    "surahNumber": 37,
+    "surahName": "As-Saffat",
+    "pageInQuran": 446,
+    "numberOfVerses": 182
+  },
+  {
+    "surahNumber": 38,
+    "surahName": "Sad",
+    "pageInQuran": 453,
+    "numberOfVerses": 88
+  },
+  {
+    "surahNumber": 39,
+    "surahName": "Az-Zumar",
+    "pageInQuran": 458,
+    "numberOfVerses": 75
+  },
+  {
+    "surahNumber": 40,
+    "surahName": "Ghafir",
+    "pageInQuran": 467,
+    "numberOfVerses": 85
+  },
+  {
+    "surahNumber": 41,
+    "surahName": "Fussilat",
+    "pageInQuran": 477,
+    "numberOfVerses": 54
+  },
+  {
+    "surahNumber": 42,
+    "surahName": "Ash-Shura",
+    "pageInQuran": 483,
+    "numberOfVerses": 53
+  },
+  {
+    "surahNumber": 43,
+    "surahName": "Az-Zukhruf",
+    "pageInQuran": 489,
+    "numberOfVerses": 89
+  },
+  {
+    "surahNumber": 44,
+    "surahName": "Ad-Dukhan",
+    "pageInQuran": 496,
+    "numberOfVerses": 59
+  },
+  {
+    "surahNumber": 45,
+    "surahName": "Al-Jathiya",
+    "pageInQuran": 499,
+    "numberOfVerses": 37
+  },
+  {
+    "surahNumber": 46,
+    "surahName": "Al-Ahqaf",
+    "pageInQuran": 502,
+    "numberOfVerses": 35
+  },
+  {
+    "surahNumber": 47,
+    "surahName": "Muhammad",
+    "pageInQuran": 507,
+    "numberOfVerses": 38
+  },
+  {
+    "surahNumber": 48,
+    "surahName": "Al-Fath",
+    "pageInQuran": 511,
+    "numberOfVerses": 29
+  },
+  {
+    "surahNumber": 49,
+    "surahName": "Al-Hujurat",
+    "pageInQuran": 515,
+    "numberOfVerses": 18
+  },
+  {
+    "surahNumber": 50,
+    "surahName": "Qaf",
+    "pageInQuran": 518,
+    "numberOfVerses": 45
+  },
+  {
+    "surahNumber": 51,
+    "surahName": "Adh-Dhariyat",
+    "pageInQuran": 520,
+    "numberOfVerses": 60
+  },
+  {
+    "surahNumber": 52,
+    "surahName": "At-Tur",
+    "pageInQuran": 523,
+    "numberOfVerses": 49
+  },
+  {
+    "surahNumber": 53,
+    "surahName": "An-Najm",
+    "pageInQuran": 526,
+    "numberOfVerses": 62
+  },
+  {
+    "surahNumber": 54,
+    "surahName": "Al-Qamar",
+    "pageInQuran": 528,
+    "numberOfVerses": 55
+  },
+  {
+    "surahNumber": 55,
+    "surahName": "Ar-Rahman",
+    "pageInQuran": 531,
+    "numberOfVerses": 78
+  },
+  {
+    "surahNumber": 56,
+    "surahName": "Al-Waqi'a",
+    "pageInQuran": 534,
+    "numberOfVerses": 96
+  },
+  {
+    "surahNumber": 57,
+    "surahName": "Al-Hadid",
+    "pageInQuran": 537,
+    "numberOfVerses": 29
+  },
+  {
+    "surahNumber": 58,
+    "surahName": "Al-Mujadila",
+    "pageInQuran": 542,
+    "numberOfVerses": 22
+  },
+  {
+    "surahNumber": 59,
+    "surahName": "Al-Hashr",
+    "pageInQuran": 545,
+    "numberOfVerses": 24
+  },
+  {
+    "surahNumber": 60,
+    "surahName": "Al-Mumtahanah",
+    "pageInQuran": 549,
+    "numberOfVerses": 13
+  },
+  {
+    "surahNumber": 61,
+    "surahName": "As-Saff",
+    "pageInQuran": 551,
+    "numberOfVerses": 14
+  },
+  {
+    "surahNumber": 62,
+    "surahName": "Al-Jumu'a",
+    "pageInQuran": 553,
+    "numberOfVerses": 11
+  },
+  {
+    "surahNumber": 63,
+    "surahName": "Al-Munafiqun",
+    "pageInQuran": 554,
+    "numberOfVerses": 11
+  },
+  {
+    "surahNumber": 64,
+    "surahName": "At-Taghabun",
+    "pageInQuran": 556,
+    "numberOfVerses": 18
+  },
+  {
+    "surahNumber": 65,
+    "surahName": "At-Talaq",
+    "pageInQuran": 558,
+    "numberOfVerses": 12
+  },
+  {
+    "surahNumber": 66,
+    "surahName": "At-Tahrim",
+    "pageInQuran": 560,
+    "numberOfVerses": 12
+  },
+  {
+    "surahNumber": 67,
+    "surahName": "Al-Mulk",
+    "pageInQuran": 562,
+    "numberOfVerses": 30
+  },
+  {
+    "surahNumber": 68,
+    "surahName": "Al-Qalam",
+    "pageInQuran": 564,
+    "numberOfVerses": 52
+  },
+  {
+    "surahNumber": 69,
+    "surahName": "Al-Haqqah",
+    "pageInQuran": 566,
+    "numberOfVerses": 52
+  },
+  {
+    "surahNumber": 70,
+    "surahName": "Al-Ma'arij",
+    "pageInQuran": 568,
+    "numberOfVerses": 44
+  },
+  {
+    "surahNumber": 71,
+    "surahName": "Nuh",
+    "pageInQuran": 570,
+    "numberOfVerses": 28
+  },
+  {
+    "surahNumber": 72,
+    "surahName": "Al-Jinn",
+    "pageInQuran": 572,
+    "numberOfVerses": 28
+  },
+  {
+    "surahNumber": 73,
+    "surahName": "Al-Muzzammil",
+    "pageInQuran": 574,
+    "numberOfVerses": 20
+  },
+  {
+    "surahNumber": 74,
+    "surahName": "Al-Muddaththir",
+    "pageInQuran": 575,
+    "numberOfVerses": 56
+  },
+  {
+    "surahNumber": 75,
+    "surahName": "Al-Qiyamah",
+    "pageInQuran": 577,
+    "numberOfVerses": 40
+  },
+  {
+    "surahNumber": 76,
+    "surahName": "Al-Insan",
+    "pageInQuran": 578,
+    "numberOfVerses": 31
+  },
+  {
+    "surahNumber": 77,
+    "surahName": "Al-Mursalat",
+    "pageInQuran": 580,
+    "numberOfVerses": 50
+  },
+  {
+    "surahNumber": 78,
+    "surahName": "An-Naba",
+    "pageInQuran": 582,
+    "numberOfVerses": 40
+  },
+  {
+    "surahNumber": 79,
+    "surahName": "An-Nazi'at",
+    "pageInQuran": 583,
+    "numberOfVerses": 46
+  },
+  {
+    "surahNumber": 80,
+    "surahName": "Abasa",
+    "pageInQuran": 585,
+    "numberOfVerses": 42
+  },
+  {
+    "surahNumber": 81,
+    "surahName": "At-Takwir",
+    "pageInQuran": 586,
+    "numberOfVerses": 29
+  },
+  {
+    "surahNumber": 82,
+    "surahName": "Al-Infitar",
+    "pageInQuran": 587,
+    "numberOfVerses": 19
+  },
+  {
+    "surahNumber": 83,
+    "surahName": "Al-Mutaffifin",
+    "pageInQuran": 587,
+    "numberOfVerses": 36
+  },
+  {
+    "surahNumber": 84,
+    "surahName": "Al-Inshiqaq",
+    "pageInQuran": 589,
+    "numberOfVerses": 25
+  },
+  {
+    "surahNumber": 85,
+    "surahName": "Al-Buruj",
+    "pageInQuran": 590,
+    "numberOfVerses": 22
+  },
+  {
+    "surahNumber": 86,
+    "surahName": "At-Tariq",
+    "pageInQuran": 591,
+    "numberOfVerses": 17
+  },
+  {
+    "surahNumber": 87,
+    "surahName": "Al-A'la",
+    "pageInQuran": 591,
+    "numberOfVerses": 19
+  },
+  {
+    "surahNumber": 88,
+    "surahName": "Al-Ghashiyah",
+    "pageInQuran": 592,
+    "numberOfVerses": 26
+  },
+  {
+    "surahNumber": 89,
+    "surahName": "Al-Fajr",
+    "pageInQuran": 593,
+    "numberOfVerses": 30
+  },
+  {
+    "surahNumber": 90,
+    "surahName": "Al-Balad",
+    "pageInQuran": 594,
+    "numberOfVerses": 20
+  },
+  {
+    "surahNumber": 91,
+    "surahName": "Ash-Shams",
+    "pageInQuran": 595,
+    "numberOfVerses": 15
+  },
+  {
+    "surahNumber": 92,
+    "surahName": "Al-Lail",
+    "pageInQuran": 595,
+    "numberOfVerses": 21
+  },
+  {
+    "surahNumber": 93,
+    "surahName": "Ad-Duha",
+    "pageInQuran": 596,
+    "numberOfVerses": 11
+  },
+  {
+    "surahNumber": 94,
+    "surahName": "Ash-Sharh",
+    "pageInQuran": 596,
+    "numberOfVerses": 8
+  },
+  {
+    "surahNumber": 95,
+    "surahName": "At-Tin",
+    "pageInQuran": 597,
+    "numberOfVerses": 8
+  },
+  {
+    "surahNumber": 96,
+    "surahName": "Al-Alaq",
+    "pageInQuran": 597,
+    "numberOfVerses": 19
+  },
+  {
+    "surahNumber": 97,
+    "surahName": "Al-Qadr",
+    "pageInQuran": 598,
+    "numberOfVerses": 5
+  },
+  {
+    "surahNumber": 98,
+    "surahName": "Al-Bayyinah",
+    "pageInQuran": 598,
+    "numberOfVerses": 8
+  },
+  {
+    "surahNumber": 99,
+    "surahName": "Az-Zalzalah",
+    "pageInQuran": 599,
+    "numberOfVerses": 8
+  },
+  {
+    "surahNumber": 100,
+    "surahName": "Al-Adiyat",
+    "pageInQuran": 599,
+    "numberOfVerses": 11
+  },
+  {
+    "surahNumber": 101,
+    "surahName": "Al-Qari'ah",
+    "pageInQuran": 600,
+    "numberOfVerses": 11
+  },
+  {
+    "surahNumber": 102,
+    "surahName": "At-Takathur",
+    "pageInQuran": 600,
+    "numberOfVerses": 8
+  },
+  {
+    "surahNumber": 103,
+    "surahName": "Al-Asr",
+    "pageInQuran": 601,
+    "numberOfVerses": 3
+  },
+  {
+    "surahNumber": 104,
+    "surahName": "Al-Humazah",
+    "pageInQuran": 601,
+    "numberOfVerses": 9
+  },
+  {
+    "surahNumber": 105,
+    "surahName": "Al-Fil",
+    "pageInQuran": 601,
+    "numberOfVerses": 5
+  },
+  {
+    "surahNumber": 106,
+    "surahName": "Quraysh",
+    "pageInQuran": 602,
+    "numberOfVerses": 4
+  },
+  {
+    "surahNumber": 107,
+    "surahName": "Al-Ma'un",
+    "pageInQuran": 602,
+    "numberOfVerses": 7
+  },
+  {
+    "surahNumber": 108,
+    "surahName": "Al-Kawthar",
+    "pageInQuran": 602,
+    "numberOfVerses": 3
+  },
+  {
+    "surahNumber": 109,
+    "surahName": "Al-Kafirun",
+    "pageInQuran": 603,
+    "numberOfVerses": 6
+  },
+  {
+    "surahNumber": 110,
+    "surahName": "An-Nasr",
+    "pageInQuran": 603,
+    "numberOfVerses": 3
+  },
+  {
+    "surahNumber": 111,
+    "surahName": "Al-Masad",
+    "pageInQuran": 603,
+    "numberOfVerses": 5
+  },
+  {
+    "surahNumber": 112,
+    "surahName": "Al-Ikhlas",
+    "pageInQuran": 604,
+    "numberOfVerses": 4
+  },
+  {
+    "surahNumber": 113,
+    "surahName": "Al-Falaq",
+    "pageInQuran": 604,
+    "numberOfVerses": 5
+  },
+  {
+    "surahNumber": 114,
+    "surahName": "An-Nas",
+    "pageInQuran": 604,
+    "numberOfVerses": 6
+  }
+]
