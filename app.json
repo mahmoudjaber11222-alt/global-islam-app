@@ -41,7 +41,13 @@
       "bundler": "metro"
     },
     "plugins": [
-      "expo-speech-recognition",
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "Allow this app to use your microphone.",
+          "speechRecognitionPermission": "Allow this app to use speech recognition."
+        }
+      ],
       [
         "expo-build-properties",
         {

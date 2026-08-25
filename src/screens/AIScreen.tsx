@@ -827,8 +827,8 @@ export default function AIScreen() {
           }}
         >
           <View
-            className="w-8 h-8 rounded-xl items-center justify-center mb-0.5"
-            style={{ backgroundColor: c.accentMuted }}
+            className="flex flex-row gap-4 w-fit h-8 rounded-xl items-center justify-center mb-0.5"
+            // style={{ backgroundColor: c.accentMuted }}
           >
             <Ionicons name="sparkles" size={16} color={c.accent} />
             <SpeechToText setError={setError} setText={setSearchValue} />

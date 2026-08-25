@@ -225,7 +225,6 @@ function SpeechToText({ setText, setError }: SpeechToTextProps) {
       <View
         className="items-center justify-center rounded-lg px-4 py-2"
         style={{
-          backgroundColor: colors?.surface6,
           borderWidth: 1,
           borderColor: colors?.border5,
         }}
