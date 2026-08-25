@@ -391,6 +391,8 @@ export default {
     },
   },
   other: {
+    note: 'Märkus',
+    theLanguage: 'keel',
     part: 'Osa',
     translation: 'Tõlge',
     verse: 'Salm',

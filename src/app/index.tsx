@@ -3,38 +3,108 @@ import { router } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Image, StatusBar, Text, View } from 'react-native';
 import { Colors, ThemeMode } from '../constants/theme';
+import useLanguage from '../hooks/useLanguage';
 import useStaticText from '../hooks/useStaticText';
+import {
+  getSelectedReciter,
+  setSelectedReciter,
+} from './(tabs)/settings/AdhanReciterSelector';
 
 // ─── Theme Setup ───────────────────────────────────────────────────
 
 const THEME: ThemeMode = 'dark';
 const C = Colors[THEME];
 
-// ─── Loading Dots Component ────────────────────────────────────────
-export async function shouldShowAthanScreen(): Promise<object | null> {
-  const allNotificationsDetails = await AsyncStorage.getItem(
-    'prayerNotificationsDetails',
-  );
-  // ).then(async (res) => );
-  const prased = await JSON.parse(allNotificationsDetails);
-  const foundItem = prased.find((item: object) => {
-    const [h, m] = item.time.split(':');
+// ─── Types ─────────────────────────────────────────────────────────
 
-    const currentDate = Date.now();
-    const toDate = new Date(item.date);
-    toDate.setHours(Number(h), Number(m), 0, 0);
-    const notTo = toDate.getTime();
-    if (currentDate > notTo) {
-      const howLongMin = (currentDate - notTo) / (1000 * 60);
-      if (howLongMin < 2) {
-        console.warn('show athan screen');
-        console.log(item);
-        return item;
-      }
-    }
-  });
-  return foundItem;
+interface PrayerNotification {
+  id: string;
+  date: string; // e.g. "2026-08-13" or ISO
+  time: string; // "HH:mm"
+  name: string;
+  shown?: boolean;
 }
+
+export interface AthanPayload {
+  id: string;
+  name: string;
+  time: string;
+  date: string;
+}
+
+// ─── Helpers ───────────────────────────────────────────────────────
+
+function parsePrayerDateTime(dateStr: string, timeStr: string): Date | null {
+  const [h, m] = timeStr.split(':').map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return null;
+
+  // Parse YYYY-MM-DD as LOCAL to avoid timezone midnight shifts
+  const match = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (match) {
+    const [, y, mo, d] = match;
+    return new Date(Number(y), Number(mo) - 1, Number(d), h, m, 0, 0);
+  }
+
+  // Fallback for full ISO strings
+  const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return null;
+  d.setHours(h, m, 0, 0);
+  return d;
+}
+
+/**
+ * Returns the prayer that should currently show its Athan screen,
+ * or `null` if none falls inside the 2-minute post-prayer window.
+ * Automatically marks the returned item as `shown` so it triggers once.
+ */
+export async function shouldShowAthanScreen(): Promise<AthanPayload | null> {
+  try {
+    const raw = await AsyncStorage.getItem('prayerNotificationsDetails');
+    if (!raw) return null;
+
+    const notifications: PrayerNotification[] = JSON.parse(raw);
+    if (!Array.isArray(notifications) || notifications.length === 0)
+      return null;
+
+    const now = Date.now();
+    const ATHAN_WINDOW_MS = 2 * 60 * 1000; // 2 minutes
+
+    const matchIndex = notifications?.findIndex((item) => {
+      if (!item || item.shown || !item.date || !item.time) return false;
+
+      const prayerDate = parsePrayerDateTime(item.date, item.time);
+      if (!prayerDate) return false;
+
+      const elapsed = now - prayerDate?.getTime();
+      return elapsed >= 0 && elapsed < ATHAN_WINDOW_MS;
+    });
+
+    if (matchIndex === -1) return null;
+
+    const match = notifications[matchIndex];
+
+    // Mark as shown so it doesn't fire again on next app open
+    const updated = [...notifications];
+    updated[matchIndex] = { ...match, shown: true };
+    await AsyncStorage.setItem(
+      'prayerNotificationsDetails',
+      JSON.stringify(updated),
+    );
+
+    return {
+      id: match.id,
+      name: match.name,
+      time: match.time,
+      date: match.date,
+    };
+  } catch (error) {
+    console.error('[shouldShowAthanScreen] Error:', error);
+    return null;
+  }
+}
+
+// ─── Loading Dots Component ────────────────────────────────────────
+
 function LoadingDots() {
   const animations = useRef([
     new Animated.Value(0),
@@ -97,6 +167,7 @@ function LoadingDots() {
 export default function Splash() {
   const [loading, setLoading] = useState(true);
   const { translatedText } = useStaticText();
+  const { handleLanguage } = useLanguage();
   // Animation values
   const glowAnim = useRef(new Animated.Value(0.25)).current;
   const logoScale = useRef(new Animated.Value(0.5)).current;
@@ -183,24 +254,40 @@ export default function Splash() {
     checkApp();
   }, []);
 
-  useEffect(() => {
-    async function se() {}
-    se();
-  }, []);
   async function checkApp() {
     try {
       setLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 2800));
+      const isReciterSelected = await getSelectedReciter();
+      if (!isReciterSelected) {
+        await setSelectedReciter({
+          id: 'abdul-basit',
+          name: 'Abdul Basit',
+          nameArabic: 'عبد الباسط',
+          description: 'Legendary Egyptian Qari, one of the most famous voices',
+          country: 'Egypt',
+          city: 'Cairo',
+          mosque: 'Masjid Imam Al-Hussain',
+          isFajr: false,
+          duration: '~4:52',
+          tags: ['classic', 'egypt', 'famous'],
+          downloadUrl:
+            'https://raw.githubusercontent.com/Kiwifu/adhan-mp3/main/Abdulbasit_Abdusamad_1_-_Egypt_%28%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%A8%D8%A7%D8%B3%D8%B7_%D8%B9%D8%A8%D8%AF_%D8%A7%D9%84%D8%B5%D9%85%D8%AF_-_%D9%85%D8%B5%D8%B1%29.mp3',
+        });
+      }
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
       const firstLaunch = await AsyncStorage.getItem('first_time');
 
-      if (Boolean(firstLaunch)) {
-        router.replace('/location');
+      if (!firstLaunch) {
+        // First time: set the flag and go home (or change to '/location' if you have it)
+        await AsyncStorage.setItem('first_time', 'true');
+        router.replace('/(tabs)/home');
       } else {
         router.replace('/(tabs)/home');
       }
     } catch (err) {
-      console.log(err);
+      console.error('Splash checkApp error:', err);
+      router.replace('/(tabs)/home');
     } finally {
       setLoading(false);
     }
@@ -269,7 +356,7 @@ export default function Splash() {
           }}
         >
           <Text
-            className="text-[42px] font-black tracking-tight text-center"
+            className="text-[42px] font-black tracking-tight text-center capitalize"
             style={{ color: C.primary }}
           >
             {translatedText?.splash?.logo}
@@ -285,7 +372,7 @@ export default function Splash() {
           }}
         >
           <Text
-            className="text-[13px] font-bold tracking-[3px]"
+            className="text-[13px] font-bold tracking-[3px] capitalize"
             style={{ color: C.accent }}
           >
             {translatedText?.navbar?.routes?.learn}
@@ -295,17 +382,17 @@ export default function Splash() {
             style={{ backgroundColor: C.quaternary, opacity: 0.5 }}
           />
           <Text
-            className="text-[13px] font-bold tracking-[3px]"
+            className="text-[13px] font-bold tracking-[3px] capitalize"
             style={{ color: C.accent }}
           >
             {translatedText?.splash?.practice}
           </Text>
           <View
-            className="w-[5px] h-[5px] rotate-45 mx-3"
+            className="w-[5px] h-[5px] rotate-45 mx-3 capitalize"
             style={{ backgroundColor: C.quaternary, opacity: 0.5 }}
           />
           <Text
-            className="text-[13px] font-bold tracking-[3px]"
+            className="text-[13px] font-bold tracking-[3px] capitalize"
             style={{ color: C.accent }}
           >
             {translatedText?.splash?.share}
@@ -331,14 +418,6 @@ export default function Splash() {
             opacity: 0.6,
           }}
         />
-
-        {/* Bismillah */}
-        {/* <Text
-          className="text-[11px] tracking-[5px] text-center font-semibold"
-          style={{ color: C.accent }}
-        >
-          بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ
-        </Text> */}
 
         {/* Animated loading dots */}
         {loading && <LoadingDots />}

@@ -23,7 +23,7 @@ export default function Select({
   const [open, setOpen] = useState(false);
 
   const selectedLabel =
-    options.find((o) => o.value === value)?.label || 'Select...';
+    options?.find((o) => o.value === value)?.label || 'Select...';
 
   return (
     <View className="w-full">

@@ -1,8 +1,25 @@
 import { Colors } from '@/src/constants/theme';
-import { useMemo } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useMemo } from 'react';
+import {
+  Dimensions,
+  PixelRatio,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useAppTheme } from '../../context/ThemeProvider';
 import CategoryItem from './CategoryItem';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const SCALE = Math.min(SCREEN_WIDTH / 375, 1.25);
+
+function normalize(size) {
+  const newSize = size * SCALE;
+  return Platform.OS === 'ios'
+    ? Math.round(PixelRatio.roundToNearestPixel(newSize))
+    : Math.round(PixelRatio.roundToNearestPixel(newSize)) - 2;
+}
+
 const generateThemes = (colors, isDark) => ({
   emerald: {
     item: {
@@ -10,9 +27,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? `${colors.success}30` : `${colors.success}20`,
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? `${colors.success}15` : `${colors.success}10`,
-      borderColor: isDark ? `${colors.success}50` : `${colors.success}40`,
+    pressed: {
+      borderColor: isDark ? `${colors.success}70` : `${colors.success}50`,
     },
     active: {
       backgroundColor: colors.success,
@@ -27,8 +43,7 @@ const generateThemes = (colors, isDark) => ({
       borderColor: colors.border,
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: colors.surface2,
+    pressed: {
       borderColor: colors.border2,
     },
     active: {
@@ -44,9 +59,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? `${colors.accent}30` : `${colors.accent}20`,
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? `${colors.accent}15` : `${colors.accent}10`,
-      borderColor: isDark ? `${colors.accent}50` : `${colors.accent}40`,
+    pressed: {
+      borderColor: isDark ? `${colors.accent}70` : `${colors.accent}50`,
     },
     active: {
       backgroundColor: colors.accent,
@@ -61,9 +75,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? `${colors.error}30` : `${colors.error}20`,
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? `${colors.error}15` : `${colors.error}10`,
-      borderColor: isDark ? `${colors.error}50` : `${colors.error}40`,
+    pressed: {
+      borderColor: isDark ? `${colors.error}70` : `${colors.error}50`,
     },
     active: {
       backgroundColor: colors.error,
@@ -78,9 +91,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? '#6366f130' : '#6366f120',
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? '#6366f115' : '#6366f110',
-      borderColor: isDark ? '#6366f150' : '#6366f140',
+    pressed: {
+      borderColor: isDark ? '#6366f190' : '#6366f170',
     },
     active: {
       backgroundColor: '#6366f1',
@@ -95,9 +107,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? '#8b5cf630' : '#8b5cf620',
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? '#8b5cf615' : '#8b5cf610',
-      borderColor: isDark ? '#8b5cf650' : '#8b5cf640',
+    pressed: {
+      borderColor: isDark ? '#8b5cf690' : '#8b5cf670',
     },
     active: {
       backgroundColor: '#8b5cf6',
@@ -112,9 +123,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? '#14b8a630' : '#14b8a620',
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? '#14b8a615' : '#14b8a610',
-      borderColor: isDark ? '#14b8a650' : '#14b8a640',
+    pressed: {
+      borderColor: isDark ? '#14b8a690' : '#14b8a670',
     },
     active: {
       backgroundColor: '#14b8a6',
@@ -129,9 +139,8 @@ const generateThemes = (colors, isDark) => ({
       borderColor: isDark ? `${colors.accent}30` : `${colors.accent}20`,
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: isDark ? `${colors.accent}15` : `${colors.accent}10`,
-      borderColor: isDark ? `${colors.accent}50` : `${colors.accent}40`,
+    pressed: {
+      borderColor: isDark ? `${colors.accent}70` : `${colors.accent}50`,
     },
     active: {
       backgroundColor: colors.accent,
@@ -146,8 +155,7 @@ const generateThemes = (colors, isDark) => ({
       borderColor: colors.border,
       color: colors.primary,
     },
-    itemHover: {
-      backgroundColor: colors.surface2,
+    pressed: {
       borderColor: colors.border2,
     },
     active: {
@@ -159,39 +167,65 @@ const generateThemes = (colors, isDark) => ({
   },
 });
 
-export default function CategorySelector({ onChange, selected, data = [] }) {
+function CategorySelector({ onChange, selected, data = [] }) {
   const { theme, isDark } = useAppTheme();
   const themes = useMemo(
     () => generateThemes(Colors[theme], isDark),
     [theme, isDark],
   );
+  const handleSelect = useCallback(
+    (key) => {
+      onChange?.(key);
+    },
+    [onChange],
+  );
 
-  function handleSelect(key) {
-    onChange?.(key);
-  }
+  const themeKeys = useMemo(() => Object.keys(themes), [themes]);
+
+  const items = useMemo(() => {
+    return data.map((item, index) => ({
+      ...item,
+      themeType: themeKeys[index % themeKeys.length],
+    }));
+  }, [data, themeKeys]);
+
+  if (!items.length) return null;
 
   return (
-    <View style={styles.container}>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.scrollContent}
-      >
-        {data.map(({ label, key, icon }, i) => {
-          const themeKey = Object.keys(themes)[i % Object.keys(themes).length];
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: isDark
+            ? `${Colors[theme].surface}60`
+            : `${Colors[theme].surface}90`,
+          borderColor: isDark
+            ? `${Colors[theme].border}30`
+            : `${Colors[theme].border}40`,
+        },
+      ]}
+      accessible={true}
+      accessibilityRole="radiogroup"
+      accessibilityLabel="Category filter"
+    >
+      <View style={styles.grid}>
+        {items.map(({ label, key, icon, themeType }) => {
+          const isSelected = selected === key;
+
           return (
-            <CategoryItem
-              key={key}
-              handleSelect={handleSelect}
-              isActive={selected === key}
-              _key={key}
-              label={label}
-              themeType={themeKey}
-              iconName={icon} // pass MaterialCommunityIcons name string
-            />
+            <View key={key} style={styles.gridItem}>
+              <CategoryItem
+                handleSelect={handleSelect}
+                isActive={isSelected}
+                _key={key}
+                label={label}
+                // themeType={themeType}
+                iconName={icon}
+              />
+            </View>
           );
         })}
-      </ScrollView>
+      </View>
     </View>
   );
 }
@@ -199,11 +233,21 @@ export default function CategorySelector({ onChange, selected, data = [] }) {
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: normalize(24), // larger vertical space
+    paddingHorizontal: normalize(20), // wider padding
+    borderRadius: normalize(24), // larger corners
+    borderWidth: 1,
   },
-  scrollContent: {
-    gap: 10,
-    paddingRight: 16,
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+  },
+  gridItem: {
+    marginRight: normalize(10),
+    marginBottom: normalize(18), // vertical breathing room between rows
   },
 });
+
+export default React.memo(CategorySelector);

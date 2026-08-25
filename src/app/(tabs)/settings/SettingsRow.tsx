@@ -38,7 +38,7 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
         flexDirection: 'row',
         alignItems: 'center',
         paddingHorizontal: 12,
-        paddingVertical: 14,
+        paddingVertical: 8,
         backgroundColor: c.surface,
         borderBottomWidth: 1,
         borderBottomColor: c.border,
@@ -60,12 +60,13 @@ export const SettingsRow: React.FC<SettingsRowProps> = ({
       </View>
 
       {/* Text Content */}
-      <View style={{ flex: 1 }}>
+      <View className="mx-4" style={{ flex: 1 }}>
         <Text
+          className="capitalize"
           style={{
             color: c.primary,
             fontWeight: '500',
-            fontSize: 15,
+            fontSize: 16,
             padding: 4,
           }}
         >

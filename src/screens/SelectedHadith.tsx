@@ -2,15 +2,20 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import Loader from '../components/common/Loader';
 import { Colors } from '../constants/theme';
 import { useAppTheme } from '../context/ThemeProvider';
 import useLanguage from '../hooks/useLanguage';
 import useStaticText from '../hooks/useStaticText';
 import { fetchHadith } from '../service/hadith';
-function Loader() {
+function LoaderHadith() {
+  const { theme } = useAppTheme();
   return (
-    <View>
-      <Text>Loading</Text>
+    <View
+      className="w-full h-full"
+      style={{ backgroundColor: Colors[theme].background }}
+    >
+      <Loader />
     </View>
   );
 }
@@ -51,7 +56,7 @@ function Hadith() {
     fetchData();
   }, [fetchData]);
 
-  if (loading || !hadith) return <Loader />;
+  if (loading || !hadith) return <LoaderHadith />;
 
   const cardBg = isDark
     ? `${Colors[theme].surface}cc`
@@ -66,11 +71,22 @@ function Hadith() {
   return (
     <ScrollView
       ref={scrollRef}
-      style={[styles.container, { backgroundColor: Colors[theme].background }]}
+      style={[
+        styles.container,
+        {
+          backgroundColor: Colors[theme].background,
+          direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+        },
+      ]}
       contentContainerStyle={styles.contentContainer}
     >
       {/* ═══════ HEADER ═══════ */}
-      <View style={styles.header}>
+      <View
+        style={
+          (styles.header,
+          { direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' })
+        }
+      >
         <View style={styles.headerRow}>
           {/* Badge */}
           <View
@@ -126,7 +142,15 @@ function Hadith() {
         </View>
 
         {/* Title */}
-        <Text style={[styles.title, { color: Colors[theme].primary }]}>
+        <Text
+          style={[
+            styles.title,
+            {
+              color: Colors[theme].primary,
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+            },
+          ]}
+        >
           {hadith.title}
         </Text>
 
@@ -144,7 +168,13 @@ function Hadith() {
             ]}
           >
             <Text
-              style={[styles.badgeText, { color: Colors[theme].successText }]}
+              style={[
+                styles.badgeText,
+                {
+                  color: Colors[theme].successText,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
             >
               {hadith.grade}
             </Text>
@@ -153,6 +183,8 @@ function Hadith() {
             style={[
               styles.tag,
               {
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
                 backgroundColor: Colors[theme].surface2,
                 borderColor: Colors[theme].border,
               },
@@ -166,12 +198,19 @@ function Hadith() {
       </View>
 
       {/* ═══════ MAIN CONTENT ═══════ */}
-      <View style={styles.mainContent}>
+      <View
+        style={
+          (styles.mainContent,
+          { direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' })
+        }
+      >
         {/* ── Hadith Text ── */}
         <View
           style={[
             styles.card,
             {
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
               backgroundColor: cardBg,
               borderColor: isDark
                 ? `${Colors[theme].border}40`
@@ -179,19 +218,38 @@ function Hadith() {
             },
           ]}
         >
-          <View style={styles.sectionHeader}>
+          <View
+            style={
+              (styles.sectionHeader,
+              { direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' })
+            }
+          >
             <MaterialCommunityIcons
               name="format-quote-open"
               size={20}
               color={Colors[theme].successText}
             />
             <Text
-              style={[styles.sectionTitle, { color: Colors[theme].primary }]}
+              style={[
+                styles.sectionTitle,
+                {
+                  color: Colors[theme].primary,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
             >
               {translatedText?.hadith?.sections.hadithText}
             </Text>
           </View>
-          <Text style={[styles.bodyText, { color: Colors[theme].secondary }]}>
+          <Text
+            style={[
+              styles.bodyText,
+              {
+                color: Colors[theme].secondary,
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
+            ]}
+          >
             {hadith.hadeeth}
           </Text>
         </View>
@@ -201,6 +259,8 @@ function Hadith() {
           style={[
             styles.card,
             {
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
               backgroundColor: cardBg,
               borderColor: isDark
                 ? `${Colors[theme].border}40`
@@ -208,14 +268,25 @@ function Hadith() {
             },
           ]}
         >
-          <View style={styles.sectionHeader}>
+          <View
+            style={
+              (styles.sectionHeader,
+              { direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' })
+            }
+          >
             <MaterialCommunityIcons
               name="translate"
               size={20}
               color={Colors[theme].accent}
             />
             <Text
-              style={[styles.sectionTitle, { color: Colors[theme].primary }]}
+              style={[
+                styles.sectionTitle,
+                {
+                  color: Colors[theme].primary,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
             >
               {translatedText?.hadith?.sections.arabicText}
             </Text>
@@ -223,7 +294,11 @@ function Hadith() {
           <Text
             style={[
               styles.arabicText,
-              { color: Colors[theme].primary, writingDirection: 'rtl' },
+              {
+                color: Colors[theme].primary,
+                writingDirection: 'rtl',
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
             ]}
           >
             {hadith.hadeeth_ar}
@@ -235,6 +310,8 @@ function Hadith() {
           style={[
             styles.card,
             {
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
               backgroundColor: cardBg,
               borderColor: isDark
                 ? `${Colors[theme].border}40`
@@ -242,19 +319,38 @@ function Hadith() {
             },
           ]}
         >
-          <View style={styles.sectionHeader}>
+          <View
+            style={
+              (styles.sectionHeader,
+              { direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' })
+            }
+          >
             <MaterialCommunityIcons
               name="lightbulb-on-outline"
               size={20}
               color={Colors[theme].accent}
             />
             <Text
-              style={[styles.sectionTitle, { color: Colors[theme].primary }]}
+              style={[
+                styles.sectionTitle,
+                {
+                  color: Colors[theme].primary,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
             >
               {translatedText?.hadith?.sections.explanation}
             </Text>
           </View>
-          <Text style={[styles.bodyText, { color: Colors[theme].secondary }]}>
+          <Text
+            style={[
+              styles.bodyText,
+              {
+                color: Colors[theme].secondary,
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
+            ]}
+          >
             {hadith.explanation}
           </Text>
           <View
@@ -263,7 +359,11 @@ function Hadith() {
           <Text
             style={[
               styles.arabicText,
-              { color: Colors[theme].primary, writingDirection: 'rtl' },
+              {
+                color: Colors[theme].primary,
+                writingDirection: 'rtl',
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
             ]}
           >
             {hadith.explanation_ar}
@@ -282,14 +382,25 @@ function Hadith() {
             },
           ]}
         >
-          <View style={styles.sectionHeader}>
+          <View
+            style={
+              (styles.sectionHeader,
+              { direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' })
+            }
+          >
             <MaterialCommunityIcons
               name="shield-check-outline"
               size={20}
               color={Colors[theme].successText}
             />
             <Text
-              style={[styles.sectionTitle, { color: Colors[theme].primary }]}
+              style={[
+                styles.sectionTitle,
+                {
+                  color: Colors[theme].primary,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
             >
               {translatedText?.hadith?.sections.authentication}
             </Text>
@@ -298,23 +409,8 @@ function Hadith() {
             style={[
               styles.gradeBox,
               {
-                backgroundColor: gradeBg,
-                borderColor: isDark
-                  ? `${Colors[theme].success}25`
-                  : `${Colors[theme].success}20`,
-              },
-            ]}
-          >
-            <Text
-              style={[styles.gradeText, { color: Colors[theme].successText }]}
-            >
-              {hadith.grade}
-            </Text>
-          </View>
-          <View
-            style={[
-              styles.gradeBox,
-              {
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
                 backgroundColor: gradeBg,
                 borderColor: isDark
                   ? `${Colors[theme].success}25`
@@ -326,6 +422,33 @@ function Hadith() {
               style={[
                 styles.gradeText,
                 {
+                  color: Colors[theme].successText,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
+            >
+              {hadith.grade}
+            </Text>
+          </View>
+          <View
+            style={[
+              styles.gradeBox,
+              {
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
+                backgroundColor: gradeBg,
+                borderColor: isDark
+                  ? `${Colors[theme].success}25`
+                  : `${Colors[theme].success}20`,
+              },
+            ]}
+          >
+            <Text
+              style={[
+                styles.gradeText,
+                {
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
                   color: Colors[theme].successText,
                   textAlign: 'right',
                   writingDirection: 'rtl',
@@ -343,6 +466,8 @@ function Hadith() {
             style={[
               styles.card,
               {
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
                 backgroundColor: cardBg,
                 borderColor: isDark
                   ? `${Colors[theme].border}40`
@@ -379,6 +504,8 @@ function Hadith() {
             style={[
               styles.card,
               {
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
                 backgroundColor: cardBg,
                 borderColor: isDark
                   ? `${Colors[theme].border}40`
@@ -389,12 +516,24 @@ function Hadith() {
             <Text
               style={[
                 styles.sectionTitle,
-                { color: Colors[theme].primary, marginBottom: 12 },
+                {
+                  color: Colors[theme].primary,
+                  marginBottom: 12,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
               ]}
             >
               {translatedText?.hadith?.sections.narrator || 'Narrator'}
             </Text>
-            <Text style={[styles.bodyText, { color: Colors[theme].secondary }]}>
+            <Text
+              style={[
+                styles.bodyText,
+                {
+                  color: Colors[theme].secondary,
+                  direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+                },
+              ]}
+            >
               {hadith.narrator}
             </Text>
           </View>
@@ -406,6 +545,7 @@ function Hadith() {
             style={[
               styles.card,
               {
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
                 backgroundColor: cardBg,
                 borderColor: isDark
                   ? `${Colors[theme].border}40`
@@ -419,7 +559,8 @@ function Hadith() {
                 { color: Colors[theme].primary, marginBottom: 12 },
               ]}
             >
-              {translatedText?.hadith?.sections.reference || 'Reference'}
+              {translatedText?.contentNormal?.hadithCard?.header
+                ?.referencesTitle || 'Reference'}
             </Text>
             <View
               style={[

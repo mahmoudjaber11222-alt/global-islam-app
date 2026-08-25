@@ -1,4 +1,5 @@
-import { createContext, useState } from 'react';
+import { createContext, useEffect, useState } from 'react';
+import { getCacheLanguage } from '../utils/cache';
 
 const languageContext = createContext(null);
 const languageList = [
@@ -50,8 +51,19 @@ const languageList = [
 ];
 
 export function LanguageContext({ children }) {
-  const [selectedLanguage, setSelectedLanguage] = useState<string>('ar');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
 
+  useEffect(() => {
+    async function se() {
+      try {
+        const cached = await getCacheLanguage();
+        setSelectedLanguage(cached || 'en');
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    se();
+  }, []);
   function handleLanguage(code: string) {
     setSelectedLanguage(code);
   }

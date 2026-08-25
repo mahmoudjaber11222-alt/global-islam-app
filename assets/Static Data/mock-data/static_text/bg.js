@@ -398,6 +398,8 @@ export default {
     },
   },
   other: {
+    note: 'Бележка',
+    theLanguage: 'езикът',
     part: 'Част',
     translation: 'Превод',
     verse: 'Стих',

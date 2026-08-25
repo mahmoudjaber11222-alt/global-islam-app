@@ -398,6 +398,8 @@ export default {
     },
   },
   other: {
+    note: 'Megjegyzés',
+    theLanguage: 'a nyelv',
     part: 'Rész',
     translation: 'Fordítás',
     verse: 'Vers',

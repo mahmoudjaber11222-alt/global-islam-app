@@ -398,6 +398,8 @@ export default {
     },
   },
   other: {
+    note: '注記',
+    theLanguage: '言語',
     part: 'パート',
     translation: '翻訳',
     verse: '節',

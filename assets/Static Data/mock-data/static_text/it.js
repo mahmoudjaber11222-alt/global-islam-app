@@ -398,6 +398,8 @@ export default {
     },
   },
   other: {
+    note: 'Nota',
+    theLanguage: 'la lingua',
     part: 'Parte',
     translation: 'Traduzione',
     verse: 'Versetto',

@@ -78,25 +78,23 @@ export default function AthanScreen({
 
       if (savedReciter) {
         setReciter(savedReciter);
-        await loadAudio(savedReciter.id);
-      } else {
-        // Fallback to default Mecca adhan
-        setReciter({
-          id: 'adhan-mecca',
-          name: 'Adhan Mecca',
-          nameArabic: 'أذان مكة',
-          description: 'From Masjid Al-Haram',
-          country: 'Saudi Arabia',
-          muezzin: 'Sheikh Ali Ahmed Mulla',
-          isFajr: false,
-          tags: ['saudi', 'makkah'],
-          downloadUrl: 'https://praytimes.org/audio/adhan/adhan-mecca.mp3',
-          duration: '0',
-          city: '',
-          mosque: '',
-        });
-        await loadAudio();
-      }
+        await loadAudio(savedReciter?.id);
+      } // Fallback to default Mecca adhan
+      // setReciter({
+      //   id: 'adhan-mecca',
+      //   name: 'Adhan Mecca',
+      //   nameArabic: 'أذان مكة',
+      //   description: 'From Masjid Al-Haram',
+      //   country: 'Saudi Arabia',
+      //   muezzin: 'Sheikh Ali Ahmed Mulla',
+      //   isFajr: false,
+      //   tags: ['saudi', 'makkah'],
+      //   downloadUrl: 'https://praytimes.org/audio/adhan/adhan-mecca.mp3',
+      //   duration: '0',
+      //   city: '',
+      //   mosque: '',
+      // });
+      // await loadAudio();
     };
 
     loadReciterAndAudio();
@@ -106,7 +104,6 @@ export default function AthanScreen({
     setIsLoading(true);
     try {
       const filePath = await AsyncStorage.getItem(reciterId);
-      console.log('file path is: ', filePath);
       // const audioSource = await getAudioSource(reciterId);
 
       if (!filePath) {

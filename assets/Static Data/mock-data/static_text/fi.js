@@ -397,6 +397,8 @@ export default {
     },
   },
   other: {
+    note: 'Huomautus',
+    theLanguage: 'kieli',
     part: 'Osa',
     translation: 'Käännös',
     verse: 'Jae',

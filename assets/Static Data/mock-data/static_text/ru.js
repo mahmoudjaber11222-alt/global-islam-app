@@ -405,6 +405,8 @@ export default {
     },
   },
   other: {
+    note: 'Примечание',
+    theLanguage: 'язык',
     part: 'Часть',
     translation: 'Перевод',
     verse: 'Стих',

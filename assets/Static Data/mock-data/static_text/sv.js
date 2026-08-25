@@ -399,6 +399,8 @@ export default {
     },
   },
   other: {
+    note: 'Anmärkning',
+    theLanguage: 'språket',
     part: 'Del',
     translation: 'Översättning',
     verse: 'Vers',

@@ -393,6 +393,8 @@ export default {
     },
   },
   other: {
+    note: 'Merknad',
+    theLanguage: 'språket',
     part: 'Del',
     translation: 'Oversettelse',
     verse: 'Vers',

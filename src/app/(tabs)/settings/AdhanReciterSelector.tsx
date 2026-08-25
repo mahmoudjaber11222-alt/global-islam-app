@@ -1,5 +1,6 @@
 // components/AdhanReciterSelector.tsx
 import reciters from '@/assets/Static Data/AthanSources.json';
+import useStaticText from '@/src/hooks/useStaticText';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useRef, useState } from 'react';
@@ -15,8 +16,8 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useAppTheme } from '../../../context/ThemeProvider';
 import { getThemeColors } from '../../../constants/theme';
+import { useAppTheme } from '../../../context/ThemeProvider';
 
 // Enable layout animations on Android
 if (
@@ -59,12 +60,12 @@ const CATEGORIES = [
     titleArabic: 'المؤذنون السنة',
     reciters: data.sunni,
   },
-  {
-    key: 'shia',
-    title: 'Shia Reciters',
-    titleArabic: 'المؤذنون الشيعة',
-    reciters: data.shia,
-  },
+  // {
+  //   key: 'shia',
+  //   title: 'Shia Reciters',
+  //   titleArabic: 'المؤذنون الشيعة',
+  //   reciters: data.shia,
+  // },
 ];
 
 const allReciters: AdhanReciter[] = [...data.sunni, ...data.shia];
@@ -378,10 +379,10 @@ const CategorySection: React.FC<CategorySectionProps> = ({
 interface AdhanReciterSelectorProps {
   onReciterSelected?: (reciter: AdhanReciter) => void;
 }
-
 export const AdhanReciterSelector: React.FC<AdhanReciterSelectorProps> = ({
   onReciterSelected,
 }) => {
+  const { translatedText } = useStaticText();
   const { theme } = useAppTheme();
   const colors = getThemeColors(theme);
 
@@ -417,7 +418,12 @@ export const AdhanReciterSelector: React.FC<AdhanReciterSelectorProps> = ({
       setSaving(false);
     }
   };
-
+  // useEffect(() => {
+  //   async function se() {
+  //     await handleSelect(CATEGORIES[0].reciters[0]);
+  //   }
+  //   se();
+  // }, []);
   const handleToggleExpand = (id: string) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     setExpandedId(expandedId === id ? null : id);
@@ -431,7 +437,7 @@ export const AdhanReciterSelector: React.FC<AdhanReciterSelectorProps> = ({
       >
         <ActivityIndicator size="large" color={colors.accent} />
         <Text className="mt-3 text-sm" style={{ color: colors.tertiary }}>
-          Loading reciters...
+          {translatedText?.ai?.loading?.label}
         </Text>
       </View>
     );
@@ -487,4 +493,4 @@ export const AdhanReciterSelector: React.FC<AdhanReciterSelectorProps> = ({
   );
 };
 
-export default AdhanReciterSelector;
+// export default AdhanReciterSelector;

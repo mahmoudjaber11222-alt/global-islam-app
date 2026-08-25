@@ -399,6 +399,8 @@ export default {
     },
   },
   other: {
+    note: 'Notă',
+    theLanguage: 'limba',
     part: 'Parte',
     translation: 'Traducere',
     verse: 'Verset',

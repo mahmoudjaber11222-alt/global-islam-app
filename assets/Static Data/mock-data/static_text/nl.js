@@ -405,6 +405,8 @@ export default {
     },
   },
   other: {
+    note: 'Opmerking',
+    theLanguage: 'de taal',
     part: 'Deel',
     translation: 'Vertaling',
     verse: 'Vers',

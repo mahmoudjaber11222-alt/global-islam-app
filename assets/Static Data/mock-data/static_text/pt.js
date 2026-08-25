@@ -408,6 +408,8 @@ export default {
     },
   },
   other: {
+    note: 'Nota',
+    theLanguage: 'o idioma',
     part: 'Parte',
     translation: 'Tradução',
     verse: 'Versículo',

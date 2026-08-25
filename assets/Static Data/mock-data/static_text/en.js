@@ -394,6 +394,8 @@ export default {
     },
   },
   other: {
+    note: 'Note',
+    theLanguage: 'the language',
     part: 'Part',
     translation: 'Translation',
     verse: 'Verse',

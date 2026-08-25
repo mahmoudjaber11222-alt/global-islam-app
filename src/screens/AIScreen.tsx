@@ -1,10 +1,9 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   Easing,
   Keyboard,
-  KeyboardAvoidingView,
   Linking,
   Platform,
   Pressable,
@@ -14,12 +13,10 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import Animated, {
-  FadeIn,
-  FadeInDown,
-  FadeInUp,
-} from 'react-native-reanimated';
+import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import SpeechToText from '../components/AI/SpeechToText';
+import Header from '../components/Hadith/Header';
 import { getThemeColors } from '../constants/theme';
 import { useAppTheme } from '../context/ThemeProvider';
 import useLanguage from '../hooks/useLanguage';
@@ -175,9 +172,7 @@ export default function AIScreen() {
   const disabled = loading || !searchValue.trim();
   const scrollRef = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
-  useEffect(() => {
-    console.log(keyboardVisible);
-  }, [keyboardVisible]);
+
   useEffect(() => {
     async function getUserLocation() {
       try {
@@ -276,47 +271,12 @@ export default function AIScreen() {
       setLoading(false);
     }
   }, [searchValue, ip, selectedLanguage]);
-
+  // tr?.navbar?.routes?.aiAssistant
+  //
+  //
   // ─── RENDER: HEADER ────────────────────────────────────
   const renderHeader = () => (
-    <Animated.View
-      entering={FadeInDown.duration(400)}
-      className="items-center pt-4 pb-5"
-    >
-      <View
-        className="flex-row items-center gap-1.5 px-3.5 py-1 rounded-full mb-4"
-        style={{
-          borderWidth: 1,
-          borderColor: c.border3,
-          backgroundColor: c.surface3,
-        }}
-      >
-        <Ionicons name="sparkles" size={12} color={c.accent} />
-        <Text
-          className="text-[11px] font-bold tracking-wider uppercase"
-          style={{ color: c.accent }}
-        >
-          {tr?.navbar?.routes?.aiAssistant}
-        </Text>
-      </View>
-
-      <Text
-        className="text-2xl font-semibold text-center tracking-tight leading-8"
-        style={{ color: c.primary }}
-      >
-        {tr?.ai?.header?.title || 'Islamic AI Assistant'}
-      </Text>
-
-      {!answer && (
-        <Text
-          className="mt-2 text-sm leading-5 text-center max-w-[280px]"
-          style={{ color: c.tertiary }}
-        >
-          {tr?.ai?.header?.subtitle ||
-            'Ask questions about Islamic jurisprudence, beliefs, and practices'}
-        </Text>
-      )}
-    </Animated.View>
+    <Header title={tr?.ai?.header?.title} subtitle={tr?.ai?.header?.subtitle} />
   );
 
   // ─── RENDER: SUGGESTIONS ───────────────────────────────
@@ -828,102 +788,97 @@ export default function AIScreen() {
       style={{ backgroundColor: c.background }}
       edges={['top']}
     >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        className="flex-1"
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+      {/* Scrollable Content */}
+      <ScrollView
+        ref={scrollRef}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        contentContainerClassName="px-4 pt-2 pb-4"
       >
-        {/* Scrollable Content */}
-        <ScrollView
-          ref={scrollRef}
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
-          contentContainerClassName="px-4 pt-2 pb-4"
-        >
-          {renderHeader()}
+        {renderHeader()}
 
-          {loading
-            ? renderLoading()
-            : error
-              ? renderError()
-              : answer
-                ? renderAnswer()
-                : !inputFocused && renderSuggestions()}
-        </ScrollView>
+        {loading
+          ? renderLoading()
+          : error
+            ? renderError()
+            : answer
+              ? renderAnswer()
+              : !inputFocused && renderSuggestions()}
+      </ScrollView>
 
-        {/* Bottom Input Bar */}
+      {/* Bottom Input Bar */}
+      <View
+        className="px-3.5 pt-2.5"
+        style={{
+          backgroundColor: c.background,
+          borderTopWidth: 1,
+          borderTopColor: c.border,
+          paddingBottom: Platform.OS === 'ios' ? 12 : 12,
+        }}
+      >
         <View
-          className="px-3.5 pt-2.5"
+          className="flex-row items-end gap-2 rounded-[20px] border px-3 py-2"
           style={{
-            backgroundColor: c.background,
-            borderTopWidth: 1,
-            borderTopColor: c.border,
-            paddingBottom: Platform.OS === 'ios' ? 12 : 12,
+            borderWidth: 1.5,
+            marginBottom: keyboardVisible ? 200 : 0,
+            borderColor: keyboardVisible ? c.border3 : c.border2,
+            backgroundColor: c.surface,
           }}
         >
           <View
-            className="flex-row items-end gap-2 rounded-[20px] border px-3 py-2"
+            className="w-8 h-8 rounded-xl items-center justify-center mb-0.5"
+            style={{ backgroundColor: c.accentMuted }}
+          >
+            <Ionicons name="sparkles" size={16} color={c.accent} />
+            <SpeechToText setError={setError} setText={setSearchValue} />
+          </View>
+
+          <TextInput
+            ref={inputRef}
+            value={searchValue}
+
+            onChangeText={setSearchValue}
+            // onFocus={() => {
+            //   setInputFocused(true);
+            //   setTimeout(() => {
+            //     scrollRef.current?.scrollToEnd({ animated: true });
+            //   }, 150);
+            // }}
+            onBlur={() => setInputFocused(false)}
+            placeholder={tr?.ai?.input?.placeholder || 'Ask a question...'}
+            placeholderTextColor={c.quaternary}
+            multiline
+            maxLength={500}
+            // textAlign={selectedLanguage === 'ar' ? 'left' : 'right'}
+            className="flex-1 text-[15px] leading-5 py-1.5 px-1"
+
             style={{
-              borderWidth: 1.5,
-              marginBottom: keyboardVisible ? 200 : 0,
-              borderColor: keyboardVisible ? c.border3 : c.border2,
-              backgroundColor: c.surface,
+              writingDirection: 'auto',
+              color: c.primary,
+              maxHeight: 100,
+              textAlignVertical: 'center',
+            }}
+            returnKeyType="send"
+            onSubmitEditing={handleSubmit}
+          />
+
+          <Pressable
+            onPress={handleSubmit}
+            disabled={disabled}
+            className="w-9 h-9 rounded-xl items-center justify-center mb-0.5 active:opacity-80"
+            style={{
+              backgroundColor: disabled ? c.surface2 : c.accent,
             }}
           >
-            <View
-              className="w-8 h-8 rounded-xl items-center justify-center mb-0.5"
-              style={{ backgroundColor: c.accentMuted }}
-            >
-              <Ionicons name="sparkles" size={16} color={c.accent} />
-            </View>
-
-            <TextInput
-              ref={inputRef}
-              value={searchValue}
-
-              onChangeText={setSearchValue}
-              // onFocus={() => {
-              //   setInputFocused(true);
-              //   setTimeout(() => {
-              //     scrollRef.current?.scrollToEnd({ animated: true });
-              //   }, 150);
-              // }}
-              onBlur={() => setInputFocused(false)}
-              placeholder={tr?.ai?.input?.placeholder || 'Ask a question...'}
-              placeholderTextColor={c.quaternary}
-              multiline
-              maxLength={500}
-              // textAlign={selectedLanguage === 'ar' ? 'left' : 'right'}
-              className="flex-1 text-[15px] leading-5 py-1.5 px-1"
-
-              style={{
-                writingDirection: 'auto',
-                color: c.primary,
-                maxHeight: 100,
-                textAlignVertical: 'center',
-              }}
-              returnKeyType="send"
-              onSubmitEditing={handleSubmit}
+            <Ionicons
+              name="arrow-up"
+              size={20}
+              color={disabled ? c.quaternary : '#ffffff'}
             />
-
-            <Pressable
-              onPress={handleSubmit}
-              disabled={disabled}
-              className="w-9 h-9 rounded-xl items-center justify-center mb-0.5 active:opacity-80"
-              style={{
-                backgroundColor: disabled ? c.surface2 : c.accent,
-              }}
-            >
-              <Ionicons
-                name="arrow-up"
-                size={20}
-                color={disabled ? c.quaternary : '#ffffff'}
-              />
-            </Pressable>
-          </View>
+          </Pressable>
         </View>
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   );
 }

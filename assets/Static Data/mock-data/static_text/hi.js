@@ -400,6 +400,8 @@ export default {
     },
   },
   other: {
+    note: 'नोट',
+    theLanguage: 'भाषा',
     part: 'भाग',
     translation: 'अनुवाद',
     verse: 'श्लोक',

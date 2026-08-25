@@ -399,6 +399,8 @@ export default {
     },
   },
   other: {
+    note: 'Poznámka',
+    theLanguage: 'jazyk',
     part: 'Část',
     translation: 'Překlad',
     verse: 'Verš',

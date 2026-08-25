@@ -376,6 +376,8 @@ export default {
     },
   },
   other: {
+    note: 'הערה',
+    theLanguage: 'השפה',
     part: 'חלק',
     translation: 'תרגום',
     verse: 'פסוק',

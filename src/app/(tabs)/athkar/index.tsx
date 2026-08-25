@@ -15,7 +15,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import athkar from '../../../../assets/Static Data/Athkar.json';
 import { getThemeColors } from '../../../constants/theme';
 import { useAppTheme } from '../../../context/ThemeProvider';
@@ -106,6 +105,7 @@ function AthkarCard({ index = 0, name = '', onPress }: AthkarCardProps) {
 
   useEffect(() => {
     const delay = index * 40;
+
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -126,10 +126,10 @@ function AthkarCard({ index = 0, name = '', onPress }: AthkarCardProps) {
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
-      toValue: 0.97,
+      toValue: 0.975,
       useNativeDriver: true,
-      friction: 8,
-      tension: 300,
+      friction: 7,
+      tension: 280,
     }).start();
   };
 
@@ -138,7 +138,7 @@ function AthkarCard({ index = 0, name = '', onPress }: AthkarCardProps) {
       toValue: 1,
       useNativeDriver: true,
       friction: 5,
-      tension: 300,
+      tension: 280,
     }).start();
   };
 
@@ -147,51 +147,88 @@ function AthkarCard({ index = 0, name = '', onPress }: AthkarCardProps) {
       style={{
         opacity: fadeAnim,
         transform: [{ translateY: slideAnim }, { scale: scaleAnim }],
+        marginBottom: 10,
       }}
     >
       <Pressable
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
-        className="flex-row-reverse items-center px-3.5 py-3 rounded-md border-b-[1px] border-[#A9A9A9]  mb-2"
-        style={({ pressed }) => ({
-          backgroundColor: c.surface,
-          shadowColor: c.primary,
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.04,
-          shadowRadius: 8,
-          elevation: 1,
-        })}
         accessibilityRole="button"
         accessibilityLabel={name}
+        className="flex-row-reverse items-center rounded-2xl px-4 py-3.5 overflow-hidden"
+        style={({ pressed }) => ({
+          backgroundColor: pressed ? c.surface2 : c.surface,
+
+          borderWidth: 1,
+          borderColor: pressed ? c.accentMuted : c.border,
+
+          shadowColor: c.primary,
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: isDark ? 0.08 : 0.06,
+          shadowRadius: 10,
+
+          elevation: isDark ? 0 : 2,
+        })}
       >
-        {/* Compact Icon */}
+        {/* Accent edge */}
         <View
-          className="w-[34px] h-[34px] rounded-[10px] items-center justify-center border"
+          className="absolute right-0 top-3 bottom-3 w-[3px] rounded-full"
           style={{
-            backgroundColor: c.surface2,
+            backgroundColor: c.accent,
+            opacity: 0.7,
+          }}
+        />
+
+        {/* Icon */}
+        <View
+          className="w-11 h-11 rounded-[14px] items-center justify-center"
+          style={{
+            backgroundColor: c.accentMuted,
+            borderWidth: 1,
             borderColor: c.border2,
           }}
         >
-          <Ionicons name={icon as any} size={16} color={c.accent} />
+          <Ionicons name={icon as any} size={19} color={c.accent} />
         </View>
 
-        {/* Text Content */}
-        <View className="flex-1 mx-3 items-end">
+        {/* Text */}
+        <View className="flex-1 mx-3.5 items-end">
           <Text
-            className="text-[16px] font-normal text-right leading-5"
-            style={{ color: c.primary, writingDirection: 'rtl' }}
+            className="text-[16px] font-semibold text-right leading-6"
+            style={{
+              color: c.primary,
+              writingDirection: 'rtl',
+            }}
             numberOfLines={1}
           >
             {name}
           </Text>
+
+          {/* Small decorative underline */}
+          <View
+            className="mt-1 h-[2px] w-6 rounded-full"
+            style={{
+              backgroundColor: c.accent,
+              opacity: 0.45,
+            }}
+          />
         </View>
 
-        {/* Subtle Indicator Dot */}
+        {/* Arrow */}
         <View
-          className="w-1 h-1 rounded-full"
-          style={{ backgroundColor: c.accentMuted }}
-        />
+          className="w-8 h-8 rounded-full items-center justify-center"
+          style={{
+            backgroundColor: c.surface2,
+            borderWidth: 1,
+            borderColor: c.border2,
+          }}
+        >
+          <Ionicons name="chevron-back" size={15} color={c.tertiary} />
+        </View>
       </Pressable>
     </Animated.View>
   );
@@ -297,8 +334,8 @@ export default function Athkar() {
   );
 
   return (
-    <SafeAreaView
-      className="flex-1"
+    <View
+      // className="flex-1"
       style={{ backgroundColor: c.background }}
       edges={['top']}
     >
@@ -344,6 +381,6 @@ export default function Athkar() {
         maxToRenderPerBatch={8}
         windowSize={10}
       />
-    </SafeAreaView>
+    </View>
   );
 }

@@ -406,6 +406,8 @@ export default {
     },
   },
   other: {
+    note: 'Note',
+    theLanguage: 'la langue',
     part: 'Partie',
     translation: 'Traduction',
     verse: 'Verset',

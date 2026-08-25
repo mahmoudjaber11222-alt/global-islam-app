@@ -400,6 +400,8 @@ export default {
     },
   },
   other: {
+    note: 'Not',
+    theLanguage: 'dil',
     part: 'Bölüm',
     translation: 'Çeviri',
     verse: 'Ayet',

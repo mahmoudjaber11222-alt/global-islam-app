@@ -381,6 +381,8 @@ export default {
     },
   },
   other: {
+    note: 'หมายเหตุ',
+    theLanguage: 'ภาษา',
     part: 'ส่วน',
     translation: 'การแปล',
     verse: 'โองการ',

@@ -1,25 +1,23 @@
-import { data } from '@/assets/mentions_categories';
-import { Ionicons } from '@expo/vector-icons';
+import Entypo from '@expo/vector-icons/Entypo';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
+import { useState } from 'react';
+import { Animated, Dimensions, ScrollView, View } from 'react-native';
+// import { View } from '';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import {
-  Dimensions,
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
-import { getThemeColors } from '../constants/theme';
+import HomeItem from '../components/Home/HomeItem';
+
+import IconList from '../components/Home/IconList';
+import ShortcutsButton from '../components/Home/ShortcutsButton';
+import { ThikrSection } from '../components/Home/ThikrSection';
+
+import { Colors, getThemeColors } from '../constants/theme';
 import { useAppTheme } from '../context/ThemeProvider';
 import useLanguage from '../hooks/useLanguage';
 import useStaticText from '../hooks/useStaticText';
-import { getTranslationFile } from '../utils/filter';
-import DailyHadith from './DailyHadith';
 import NewsRSSNative from './NewsRSSNative';
-import QiblaDirection from './QiblaDirection';
-import RandomVerse from './RandomVerse';
-
 const { width } = Dimensions.get('window');
 
 interface HomeScreenProps {
@@ -51,201 +49,6 @@ interface HomeScreenProps {
   refreshing?: boolean;
 }
 
-const NextPrayerCountdown: React.FC<{
-  prayer: HomeScreenProps['nextPrayer'];
-}> = ({ prayer }) => {
-  const { theme } = useAppTheme();
-  const c = getThemeColors(theme);
-  const { translatedText: tr } = useStaticText();
-  return (
-    <View
-      className="rounded-2xl overflow-hidden mb-6"
-      style={{
-        backgroundColor: c.surface,
-        borderWidth: 1,
-        borderColor: c.border,
-      }}
-    >
-      <View className="p-7 items-center">
-        <Text
-          className="text-[11px] font-bold tracking-[3px] mb-3 uppercase"
-          style={{ color: c.accent }}
-        >
-          {tr?.prayerApp?.upcoming}
-        </Text>
-        <Text
-          className="text-[42px] font-light tracking-[4px] uppercase mb-2"
-          style={{ color: c.primary }}
-        >
-          {tr?.prayers?.times[prayer.name]}
-        </Text>
-        <Text
-          className="text-[13px] font-normal tracking-wide mb-5"
-          style={{ color: c.tertiary }}
-        >
-          {prayer.time}
-        </Text>
-
-        <View className="flex-row items-center justify-center gap-2">
-          {[
-            { val: prayer.hours, label: tr?.homeApp?.hour },
-            { val: prayer.minutes, label: tr?.homeApp?.minute },
-            { val: prayer.seconds, label: tr?.homeApp?.second },
-          ].map((item, i) => (
-            <React.Fragment key={item.label}>
-              <View
-                className="items-center rounded-lg py-3 px-4 min-w-[64px]"
-                style={{
-                  backgroundColor: c.surface2,
-                  borderWidth: 1,
-                  borderColor: c.border2,
-                }}
-              >
-                <Text
-                  className="text-[28px] font-extralight tabular-nums"
-                  style={{ color: c.primary }}
-                >
-                  {item.val}
-                </Text>
-                <Text
-                  className="text-[9px] font-bold tracking-[1.5px] mt-1"
-                  style={{ color: c.tertiary }}
-                >
-                  {item.label}
-                </Text>
-              </View>
-              {i < 2 && (
-                <Text
-                  className="text-2xl font-light"
-                  style={{ color: c.accent }}
-                >
-                  :
-                </Text>
-              )}
-            </React.Fragment>
-          ))}
-        </View>
-      </View>
-    </View>
-  );
-};
-
-const ThikrSection: React.FC<{
-  onNavigate: (type: 'morning' | 'evening') => void;
-}> = ({ onNavigate }) => {
-  const { theme } = useAppTheme();
-  const c = getThemeColors(theme);
-  const { selectedLanguage } = useLanguage();
-  const { translatedText } = useStaticText();
-
-  const [catTr, setCatTr] = useState();
-
-  useEffect(() => {
-    async function se() {
-      const result = await getTranslationFile(
-        selectedLanguage,
-        'categories_translations',
-      );
-      setCatTr(result.categories);
-    }
-    se();
-  }, [selectedLanguage]);
-  const thikrs = [
-    {
-      type: 'morning' as const,
-      title: data['أذكار الصباح'][selectedLanguage],
-
-      icon: 'sunny-outline' as const,
-      description: translatedText?.athkarApp?.descM,
-    },
-    {
-      type: 'evening' as const,
-      title: data['أذكار المساء'][selectedLanguage],
-      icon: 'moon-outline' as const,
-      description: translatedText?.athkarApp?.descE,
-    },
-  ];
-  return (
-    <View className="mb-6">
-      <View className="flex-row items-center justify-between mb-4 px-1">
-        <Text
-          className="text-xl font-semibold tracking-wide"
-          style={{ color: c.primary }}
-        >
-          {translatedText?.athkar?.title}
-        </Text>
-        <Pressable
-          onPress={() => onNavigate('morning')}
-          className="flex-row items-center gap-1"
-        >
-          <Text
-            className="capitalize text-[12px] font-semibold tracking-wide"
-            style={{ color: c.accent }}
-          >
-            {translatedText?.home?.athkar?.button}
-          </Text>
-          <Ionicons name="chevron-forward" size={14} color={c.accent} />
-        </Pressable>
-      </View>
-
-      <View className="flex-row gap-3">
-        {thikrs.map((thikr) => (
-          <Pressable
-            key={thikr.type}
-            onPress={() =>
-              thikr.type === 'evening'
-                ? router.navigate('/(tabs)/athkar/أذكار المساء')
-                : router.navigate('/(tabs)/athkar/أذكار الصباح')
-            }
-            className="flex-1 rounded-2xl p-5 active:opacity-80"
-            style={{
-              backgroundColor: c.surface,
-              borderWidth: 1,
-              borderColor: c.border,
-            }}
-          >
-            <View className="flex-row items-center justify-between mb-4">
-              <View
-                className="w-10 h-10 rounded-xl items-center justify-center"
-                style={{
-                  backgroundColor:
-                    thikr.type === 'morning' ? c.surface3 : c.surface2,
-                }}
-              >
-                <Ionicons
-                  name={thikr.icon}
-                  size={20}
-                  color={thikr.type === 'morning' ? c.accent : c.secondary}
-                />
-              </View>
-              <Ionicons name="arrow-forward" size={14} color={c.quinary} />
-            </View>
-
-            <Text
-              className="text-[15px] font-semibold tracking-wide mb-1"
-              style={{ color: c.primary }}
-            >
-              {thikr.title}
-            </Text>
-            <Text
-              className="text-[13px] font-light tracking-wide mb-2"
-              style={{ color: c.accent }}
-            >
-              {thikr.arabic}
-            </Text>
-            <Text
-              className="text-[11px] font-normal tracking-wide leading-4"
-              style={{ color: c.tertiary }}
-            >
-              {thikr.description}
-            </Text>
-          </Pressable>
-        ))}
-      </View>
-    </View>
-  );
-};
-
 export default function HomeScreen({
   nextPrayer,
   qiblaDirection,
@@ -257,59 +60,250 @@ export default function HomeScreen({
   onRefresh,
   refreshing = false,
 }: HomeScreenProps) {
-  const { theme } = useAppTheme();
+  const { theme, isDark } = useAppTheme();
   const c = getThemeColors(theme);
   const { selectedLanguage } = useLanguage();
   const { translatedText } = useStaticText();
-  return (
-    <>
-      <NewsRSSNative selectedLanguage={selectedLanguage} />
+  const [showIconList, setShowIconList] = useState(false);
+  function onShortcutButtonPress() {
+    setShowIconList((p) => !p);
+  }
+  const iconSize = 24;
 
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          onRefresh ? (
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={c.accent}
-              colors={[c.accent]}
-            />
-          ) : undefined
-        }
-      >
-        <View className="px-5 pt-6 pb-10">
-          {/* Greeting */}
-          <View
-            className="mb-6"
-            style={{ direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' }}
-          >
-            <Text
-              className="text-[11px] font-bold tracking-[2.5px] uppercase mb-1"
-              style={{ color: c.tertiary }}
-            >
-              {translatedText?.homeApp?.greet}
-            </Text>
-            <Text
-              className="text-2xl font-light tracking-wide"
-              style={{ color: c.primary }}
-            >
-              {translatedText?.homeApp?.welcome}
-            </Text>
-          </View>
+  const compassColor = '#4FC3F7';
+  const hadithColor = '#C084FC';
+  const quranColor = '#34D399';
+  const aiColor = '#FBBF24';
 
-          <NextPrayerCountdown prayer={nextPrayer} />
-          <RandomVerse />
-          <DailyHadith />
-          <QiblaDirection
-            onNavigate={() => {
-              router.push('/(tabs)/qibla');
-            }}
+  if (true) {
+    return (
+      <>
+        <NewsRSSNative selectedLanguage={selectedLanguage} />
+        <ScrollView className="w-full  h-full py-4">
+          <HomeItem
+            icon={<Entypo name="controller-next" size={24} color="white" />}
+            featured
+            imageUrl="https://www.egypttoursplus.com/wp-content/uploads/2025/07/Blue-mosque-in-glorius-sunset-Istanbul-Sultanahmet-park.-The-biggest-mosque-in-Istanbul-of-Sultan-Ahmed-Ottoman-Empire.jpg"
+            theme={theme}
+            title={`${translatedText?.prayerApp?.upcoming} - ${nextPrayer.name}`}
+            description={`${nextPrayer.hours}:${nextPrayer.minutes}:${nextPrayer.seconds}`}
           />
           <ThikrSection onNavigate={onNavigateAthkar} />
+
+          {showIconList && (
+            <View className={' rounded-md py-1 '}>
+              <IconList
+                iconList={[
+                  {
+                    icon: (
+                      <Animated.View
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 16,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'rgba(79, 195, 247, 0.12)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(79, 195, 247, 0.25)',
+                        }}
+                      >
+                        <FontAwesome5
+                          name="compass"
+                          size={iconSize}
+                          color={compassColor}
+                        />
+                      </Animated.View>
+                    ),
+                    onPress() {
+                      router.push('/(tabs)/qibla');
+                    },
+                    name: 'Compass',
+                  },
+
+                  {
+                    icon: (
+                      <Animated.View
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 16,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'rgba(192, 132, 252, 0.12)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(192, 132, 252, 0.25)',
+                        }}
+                      >
+                        <AntDesign
+                          name="read"
+                          size={iconSize}
+                          color={hadithColor}
+                        />
+                      </Animated.View>
+                    ),
+                    onPress() {
+                      router.push('/(tabs)/hadith');
+                    },
+                    name: 'Hadith Collections',
+                  },
+
+                  {
+                    icon: (
+                      <Animated.View
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 16,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(52, 211, 153, 0.25)',
+                        }}
+                      >
+                        <FontAwesome5
+                          name="quran"
+                          size={iconSize}
+                          color={quranColor}
+                        />
+                      </Animated.View>
+                    ),
+                    onPress() {
+                      router.push('/(tabs)/quran');
+                    },
+                    name: 'Quran',
+                  },
+
+                  {
+                    icon: (
+                      <Animated.View
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 16,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'rgba(251, 191, 36, 0.12)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(251, 191, 36, 0.25)',
+                        }}
+                      >
+                        <Ionicons
+                          name="flash"
+                          size={iconSize}
+                          color={aiColor}
+                        />
+                      </Animated.View>
+                    ),
+                    onPress() {
+                      router.push('/(tabs)/ai');
+                    },
+                    name: 'AI Assistant',
+                  },
+                ]}
+              />
+            </View>
+          )}
+        </ScrollView>
+        <View
+          className="absolute bottom-0 mb-8 w-25 h-25 self-center items-center justify-center rounded-full"
+          style={{}}
+        >
+          <View
+            className=" rounded-full items-center justify-center "
+            style={{
+              width: 50,
+              height: 50,
+              backgroundColor: Colors[theme].surface3,
+              borderWidth: 4,
+              borderColor: `${Colors[theme].primary}20`,
+            }}
+          >
+            <ShortcutsButton
+              Icon={
+                showIconList ? (
+                  <Ionicons
+                    name="close"
+                    size={22}
+                    color={Colors[theme].primary}
+                  />
+                ) : (
+                  <Entypo name="grid" size={22} color={Colors[theme].primary} />
+                )
+              }
+              onPress={onShortcutButtonPress}
+            />
+          </View>
         </View>
-      </ScrollView>
-    </>
-  );
+      </>
+    );
+    // return (
+    //   <View className="w-full gap-4 h-full">
+    //     <NewsRSSNative selectedLanguage={selectedLanguage} />
+
+    //     <ScrollView
+    //       showsVerticalScrollIndicator={false}
+    //       // contentContainerStyle={{ paddingBottom: 32 }}
+    //     >
+
+    //       <View
+    //         className="mb-6"
+    //         style={{ direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' }}
+    //       >
+    //         <Text
+    //           className="text-[11px] font-bold tracking-[2.5px] uppercase mb-1"
+    //           style={{ color: c.tertiary }}
+    //         >
+    //           {translatedText?.homeApp?.greet}
+    //         </Text>
+    //         <Text
+    //           className="text-2xl font-light tracking-wide"
+    //           style={{ color: c.primary }}
+    //         >
+    //           {translatedText?.homeApp?.welcome}
+    //         </Text>
+    //       </View>
+
+    //       <View className="w-full gap-3">
+    //         <NextPrayerCountdown prayer={nextPrayer} />
+    //         {/* <View className=""> */}
+    //         {/* </View> */}
+
+    //         <RandomVerse />
+    //         <DailyHadith />
+
+    //         <HomePressable
+    //           title={translatedText?.compareRelg?.staticText?.navbar}
+    //           imageUrl={require('@/assets/images/relg.jpg')}
+    //           onNavigate={() => {
+    //             router.navigate('/(tabs)/compare');
+    //           }}
+    //         />
+    //         <HomePressable
+    //           imageUrl={require('@/assets/images/learn.jpg')}
+    //           title={translatedText?.navbar?.routes?.learn}
+    //           onNavigate={() => {
+    //             router.navigate('/(tabs)/learn');
+    //           }}
+    //         />
+    //         <HomePressable
+    //           imageUrl={require('@/assets/images/compass.jpg')}
+    //           title={translatedText?.home?.qibla?.title}
+    //           onNavigate={() => {
+    //             router.navigate('/(tabs)/qibla');
+    //           }}
+    //         />
+
+    //         {/* <QiblaDirection
+    //       onNavigate={() => {
+    //         router.push('/(tabs)/qibla');
+    //         }}
+    //         /> */}
+    //         <ThikrSection onNavigate={onNavigateAthkar} />
+    //       </View>
+    //     </ScrollView>
+    //   </View>
+    // );
+  }
 }

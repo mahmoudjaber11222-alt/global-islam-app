@@ -33,6 +33,7 @@ export async function getPrayer(
           (item) => item.date.gregorian.date === date,
         );
 
+        // console.log(prayerByDate?.timings);
         if (!prayerByDate) {
           console.log('PRAYERS BY DATE RETURNS UNDEFINED');
           return { ok: false, msg: 'no prayers to return' };
@@ -46,7 +47,36 @@ export async function getPrayer(
 
       // const result: AlAdhanResponse = await response.json();
       const result: AlAdhanResponseList = await response.json();
+      // result.data = result.data.map((item) => {
+      //   const { Maghrib } = item.timings;
+      //   const postTime = Maghrib.split(' ')[1];
+      //   let [h, m] = Maghrib.split(' ')[0].split(':');
 
+      //   const date = new Date();
+      //   date.setHours(Number(h));
+      //   date.setMinutes(Number(m) + 5);
+      //   h = date.getHours();
+      //   m = date.getMinutes();
+      //   item.timings['Maghrib'] = `${h}:${m} ${postTime}`;
+
+      //   return item;
+      // });
+      const reData = [];
+      result.data.forEach((item) => {
+        const { Maghrib } = item.timings;
+        const postTime = Maghrib.split(' ')[1];
+        let [h, m] = Maghrib.split(' ')[0].split(':').map(Number);
+
+        const date = new Date();
+        date.setHours(Number(h));
+        date.setMinutes(Number(m) + 5);
+        h = date.getHours();
+        m = date.getMinutes();
+        item.timings['Maghrib'] = `${h}:${m} ${postTime}`;
+
+        reData.push(item);
+      });
+      result.data = reData;
       await AsyncStorage.setItem(stKey, JSON.stringify(result));
       const prayerByDate = result?.data?.find(
         (item) => item.date.gregorian.date === date,

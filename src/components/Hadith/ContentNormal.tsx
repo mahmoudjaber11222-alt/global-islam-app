@@ -60,7 +60,11 @@ const ContentNormal = memo(() => {
   const toggleExpand = useCallback((id) => {
     setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
-
+  useEffect(() => {
+    if (!inputValue) {
+      setHadiths([]);
+    }
+  }, [inputValue]);
   const BOOKS = useMemo(() => {
     const opts = translatedText?.contentNormal?.searchSection?.books?.options;
     return opts
@@ -196,19 +200,22 @@ const ContentNormal = memo(() => {
 
         <Pressable
           onPress={handleSearch}
+          className="w-full h-12 "
           style={({ pressed }) => [
             styles.searchBtn,
             {
-              backgroundColor: Colors[theme].success,
               opacity: pressed ? 0.9 : 1,
               transform: [{ scale: pressed ? 0.97 : 1 }],
             },
           ]}
         >
           <Text
+            className="h-full rounded-md px-4 py-2"
             style={{
-              color: isDark ? Colors[theme].background : Colors[theme].surface,
+              color: 'white',
               fontWeight: '700',
+              backgroundColor: Colors[theme].accent,
+
               fontSize: 15,
             }}
           >
@@ -273,7 +280,7 @@ const ContentNormal = memo(() => {
       )}
 
       {/* ═══════ INITIAL STATE ═══════ */}
-      {!query && (
+      {!inputValue && (
         <View style={styles.centerBox}>
           <Text style={{ color: Colors[theme].tertiary, fontSize: 15 }}>
             {translatedText?.contentNormal?.initialPlaceholder}
@@ -287,203 +294,173 @@ const ContentNormal = memo(() => {
       )}
 
       {/* ═══════ RESULTS ═══════ */}
-      <View style={{ gap: 12 }}>
-        {paginated.map((h, i) => {
-          const isOpen = expanded[h.hadithnumber];
-          return (
-            <View
-              key={h.hadithnumber || i}
-              style={[
-                styles.card,
-                {
-                  backgroundColor: isDark
-                    ? `${Colors[theme].surface}40`
-                    : `${Colors[theme].surface}60`,
-                  borderColor: isDark
-                    ? `${Colors[theme].border}30`
-                    : `${Colors[theme].border}50`,
-                },
-              ]}
-            >
+      {
+        <View style={{ gap: 12 }}>
+          {paginated.map((h, i) => {
+            const isOpen = expanded[h.hadithnumber];
+            return (
               <View
+                key={h.hadithnumber || i}
                 style={[
-                  styles.cardInner,
-                  { alignItems: isRTL ? 'flex-end' : 'flex-start' },
+                  styles.card,
+                  {
+                    backgroundColor: isDark
+                      ? `${Colors[theme].surface}40`
+                      : `${Colors[theme].surface}60`,
+                    borderColor: isDark
+                      ? `${Colors[theme].border}30`
+                      : `${Colors[theme].border}50`,
+                  },
                 ]}
               >
-                {/* Header */}
                 <View
                   style={[
-                    styles.cardHeader,
-                    { flexDirection: isRTL ? 'row-reverse' : 'row' },
+                    styles.cardInner,
+                    { alignItems: isRTL ? 'flex-end' : 'flex-start' },
                   ]}
                 >
+                  {/* Header */}
                   <View
                     style={[
-                      styles.badge,
-                      {
-                        backgroundColor: isDark
-                          ? `${Colors[theme].success}20`
-                          : `${Colors[theme].success}15`,
-                      },
-                    ]}
-                  >
-                    <Text
-                      style={[
-                        styles.badgeText,
-                        { color: Colors[theme].successText },
-                      ]}
-                    >
-                      {h.bookName}
-                    </Text>
-                  </View>
-                  <Text style={{ color: Colors[theme].tertiary, fontSize: 12 }}>
-                    {
-                      translatedText?.contentNormal?.hadithCard?.header
-                        ?.hadithPrefix
-                    }
-                    {h.hadithnumber}
-                  </Text>
-                </View>
-
-                {/* Text */}
-                <Text
-                  style={[
-                    styles.hadithText,
-                    {
-                      color: Colors[theme].secondary,
-                      textAlign: isRTL ? 'right' : 'left',
-                      writingDirection: isRTL ? 'rtl' : 'ltr',
-                    },
-                  ]}
-                >
-                  {isOpen
-                    ? h.text
-                    : h.text?.slice(0, 250) +
-                      (h.text?.length > 250 ? '...' : '')}
-                </Text>
-
-                {/* Expand Button */}
-                <Pressable onPress={() => toggleExpand(h.hadithnumber)}>
-                  <Text
-                    style={{
-                      color: Colors[theme].successText,
-                      fontSize: 12,
-                      fontWeight: '700',
-                      marginTop: 4,
-                    }}
-                  >
-                    {isOpen
-                      ? translatedText?.contentNormal?.hadithCard?.showLess
-                      : translatedText?.contentNormal?.hadithCard?.showMore}
-                  </Text>
-                </Pressable>
-
-                {/* Grades */}
-                {h.grades?.length > 0 && (
-                  <View
-                    style={[
-                      styles.gradesRow,
-                      { flexDirection: isRTL ? 'row-reverse' : 'row' },
-                    ]}
-                  >
-                    {h.grades.map((g, idx) => {
-                      const style = getGradeStyle(g.grade);
-                      return (
-                        <View
-                          key={idx}
-                          style={[
-                            styles.gradeBadge,
-                            {
-                              backgroundColor: style.backgroundColor,
-                              borderColor: style.borderColor,
-                              borderWidth: 1,
-                            },
-                          ]}
-                        >
-                          <Text
-                            style={{
-                              fontSize: 11,
-                              fontWeight: '700',
-                              color: style.color,
-                            }}
-                          >
-                            {g.name}: {g.grade}
-                          </Text>
-                        </View>
-                      );
-                    })}
-                  </View>
-                )}
-
-                {/* References */}
-                <View
-                  style={[
-                    styles.refSection,
-                    { borderTopColor: Colors[theme].border },
-                  ]}
-                >
-                  <View
-                    style={[
-                      styles.refTitleRow,
+                      styles.cardHeader,
                       { flexDirection: isRTL ? 'row-reverse' : 'row' },
                     ]}
                   >
                     <View
                       style={[
-                        styles.dot,
-                        { backgroundColor: Colors[theme].success },
+                        styles.badge,
+                        {
+                          backgroundColor: isDark
+                            ? `${Colors[theme].success}20`
+                            : `${Colors[theme].success}15`,
+                        },
                       ]}
-                    />
+                    >
+                      <Text
+                        style={[
+                          styles.badgeText,
+                          { color: Colors[theme].successText },
+                        ]}
+                      >
+                        {h.bookName}
+                      </Text>
+                    </View>
                     <Text
-                      style={{
-                        color: Colors[theme].tertiary,
-                        fontSize: 11,
-                        fontWeight: '700',
-                        textTransform: 'uppercase',
-                        letterSpacing: 0.5,
-                      }}
+                      style={{ color: Colors[theme].tertiary, fontSize: 12 }}
                     >
                       {
                         translatedText?.contentNormal?.hadithCard?.header
-                          ?.referencesTitle
+                          ?.hadithPrefix
                       }
+                      {h.hadithnumber}
                     </Text>
                   </View>
 
-                  <View
+                  {/* Text */}
+                  <Text
                     style={[
-                      styles.refBox,
+                      styles.hadithText,
                       {
-                        backgroundColor: Colors[theme].surface2,
-                        borderColor: Colors[theme].border,
+                        color: Colors[theme].secondary,
+                        textAlign: isRTL ? 'right' : 'left',
+                        writingDirection: isRTL ? 'rtl' : 'ltr',
                       },
                     ]}
                   >
-                    <Text
-                      style={{
-                        color: Colors[theme].tertiary,
-                        fontSize: 11,
-                        marginBottom: 4,
-                      }}
-                    >
-                      {
-                        translatedText?.contentNormal?.hadithCard?.header
-                          ?.referenceLabel
-                      }
-                    </Text>
-                    <Text
-                      style={{
-                        color: Colors[theme].primary,
-                        fontSize: 14,
-                        fontWeight: '700',
-                      }}
-                    >
-                      {h.bookName} {h.hadithnumber}
-                    </Text>
-                  </View>
+                    {isOpen
+                      ? h.text
+                      : h.text?.slice(0, 250) +
+                        (h.text?.length > 250 ? '...' : '')}
+                  </Text>
 
-                  {h.reference && (
+                  {/* Expand Button */}
+                  <Pressable onPress={() => toggleExpand(h.hadithnumber)}>
+                    <Text
+                      style={{
+                        color: Colors[theme].successText,
+                        fontSize: 12,
+                        fontWeight: '700',
+                        marginTop: 4,
+                      }}
+                    >
+                      {isOpen
+                        ? translatedText?.contentNormal?.hadithCard?.showLess
+                        : translatedText?.contentNormal?.hadithCard?.showMore}
+                    </Text>
+                  </Pressable>
+
+                  {/* Grades */}
+                  {h.grades?.length > 0 && (
+                    <View
+                      style={[
+                        styles.gradesRow,
+                        { flexDirection: isRTL ? 'row-reverse' : 'row' },
+                      ]}
+                    >
+                      {h.grades.map((g, idx) => {
+                        const style = getGradeStyle(g.grade);
+                        return (
+                          <View
+                            key={idx}
+                            style={[
+                              styles.gradeBadge,
+                              {
+                                backgroundColor: style.backgroundColor,
+                                borderColor: style.borderColor,
+                                borderWidth: 1,
+                              },
+                            ]}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 11,
+                                fontWeight: '700',
+                                color: style.color,
+                              }}
+                            >
+                              {g.name}: {g.grade}
+                            </Text>
+                          </View>
+                        );
+                      })}
+                    </View>
+                  )}
+
+                  {/* References */}
+                  <View
+                    style={[
+                      styles.refSection,
+                      { borderTopColor: Colors[theme].border },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.refTitleRow,
+                        { flexDirection: isRTL ? 'row-reverse' : 'row' },
+                      ]}
+                    >
+                      <View
+                        style={[
+                          styles.dot,
+                          { backgroundColor: Colors[theme].success },
+                        ]}
+                      />
+                      <Text
+                        style={{
+                          color: Colors[theme].tertiary,
+                          fontSize: 11,
+                          fontWeight: '700',
+                          textTransform: 'uppercase',
+                          letterSpacing: 0.5,
+                        }}
+                      >
+                        {
+                          translatedText?.contentNormal?.hadithCard?.header
+                            ?.referencesTitle
+                        }
+                      </Text>
+                    </View>
+
                     <View
                       style={[
                         styles.refBox,
@@ -502,48 +479,84 @@ const ContentNormal = memo(() => {
                       >
                         {
                           translatedText?.contentNormal?.hadithCard?.header
-                            ?.inBookReference
+                            ?.referenceLabel
                         }
                       </Text>
                       <Text
                         style={{
-                          color: Colors[theme].secondary,
+                          color: Colors[theme].primary,
                           fontSize: 14,
-                          fontWeight: '600',
+                          fontWeight: '700',
                         }}
                       >
-                        Book {h.reference.book} • Hadith {h.reference.hadith}
+                        {h.bookName} {h.hadithnumber}
                       </Text>
                     </View>
-                  )}
 
-                  {h.arabicnumber && (
-                    <Text
-                      style={{ color: Colors[theme].quaternary, fontSize: 12 }}
-                    >
-                      {
-                        translatedText?.contentNormal?.hadithCard?.header
-                          ?.arabicReference
-                      }
-                      : #{h.arabicnumber}
-                    </Text>
-                  )}
+                    {h.reference && (
+                      <View
+                        style={[
+                          styles.refBox,
+                          {
+                            backgroundColor: Colors[theme].surface2,
+                            borderColor: Colors[theme].border,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={{
+                            color: Colors[theme].tertiary,
+                            fontSize: 11,
+                            marginBottom: 4,
+                          }}
+                        >
+                          {
+                            translatedText?.contentNormal?.hadithCard?.header
+                              ?.inBookReference
+                          }
+                        </Text>
+                        <Text
+                          style={{
+                            color: Colors[theme].secondary,
+                            fontSize: 14,
+                            fontWeight: '600',
+                          }}
+                        >
+                          Book {h.reference.book} • Hadith {h.reference.hadith}
+                        </Text>
+                      </View>
+                    )}
+
+                    {h.arabicnumber && (
+                      <Text
+                        style={{
+                          color: Colors[theme].quaternary,
+                          fontSize: 12,
+                        }}
+                      >
+                        {
+                          translatedText?.contentNormal?.hadithCard?.header
+                            ?.arabicReference
+                        }
+                        : #{h.arabicnumber}
+                      </Text>
+                    )}
+                  </View>
                 </View>
               </View>
+            );
+          })}
+
+          {/* Empty */}
+          {query && !loading && filtered.length === 0 && (
+            <View style={styles.centerBox}>
+              <Text style={{ color: Colors[theme].tertiary, fontSize: 15 }}>
+                {translatedText?.contentNormal?.emptyState}
+              </Text>
             </View>
-          );
-        })}
-
-        {/* Empty */}
-        {query && !loading && filtered.length === 0 && (
-          <View style={styles.centerBox}>
-            <Text style={{ color: Colors[theme].tertiary, fontSize: 15 }}>
-              {translatedText?.contentNormal?.emptyState}
-            </Text>
-          </View>
-        )}
-      </View>
-
+          )}
+        </View>
+      }
       {/* ═══════ PAGINATION ═══════ */}
       {query && totalPages > 1 && (
         <View

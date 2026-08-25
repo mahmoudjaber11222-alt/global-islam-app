@@ -157,7 +157,7 @@ const RandomVerse: React.FC = () => {
 
   return (
     <View
-      className="rounded-2xl p-6 mb-6 overflow-hidden"
+      className=" p-6 mb-6 overflow-hidden"
       style={{
         backgroundColor: c.surface,
         borderWidth: 1,
@@ -349,11 +349,6 @@ const RandomVerse: React.FC = () => {
         >
           {verse.chapter?.name_simple} · {verse.verse_key}
         </Text>
-        <Ionicons
-          name={expanded ? 'chevron-up' : 'chevron-down'}
-          size={16}
-          color={c.quaternary}
-        />
       </View>
     </View>
   );

@@ -397,6 +397,8 @@ export default {
     },
   },
   other: {
+    note: '참고',
+    theLanguage: '언어',
     part: '부분',
     translation: '번역',
     verse: '절',

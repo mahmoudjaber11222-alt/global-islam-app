@@ -393,6 +393,8 @@ export default {
     },
   },
   other: {
+    note: 'ملاحظة',
+    theLanguage: 'اللغة',
     part: 'جزء',
     translation: 'ترجمة',
     verse: 'آية',

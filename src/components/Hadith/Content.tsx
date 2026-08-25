@@ -1,14 +1,15 @@
 import { Colors } from '@/src/constants/theme';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { memo } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useAppTheme } from '../../context/ThemeProvider';
 import useStaticText from '../../hooks/useStaticText';
 import Loader from '../common/Loader';
 import Toast from '../common/Toast';
+
 const Content = memo(
   ({
-    onClick, // rename to onPress in parent if desired
+    onClick,
     firstSearch,
     hadithLoading,
     networkError,
@@ -18,47 +19,71 @@ const Content = memo(
     const { translatedText } = useStaticText();
     const { theme, isDark } = useAppTheme();
     const isRTL = selectedLanguage === 'ar';
+    const c = Colors[theme];
 
-    const renderItem = ({ item }) => (
+    const containerBase = {
+      backgroundColor: isDark ? `${c.surface}50` : `${c.surface4}90`,
+      borderColor: isDark ? `${c.border}25` : `${c.border}60`,
+    };
+
+    const renderItem = (item) => (
       <Pressable
+        className="shadow-md"
+        key={item?.id?.toString() || item?.headerData?.ID?.toString()}
         onPress={() => onClick?.(item?.headerData?.ID)}
         style={({ pressed }) => [
           styles.card,
           {
-            backgroundColor: Colors[theme].surface,
-            borderColor: isDark
-              ? `${Colors[theme].border}40`
-              : `${Colors[theme].border}60`,
-            opacity: pressed ? 0.9 : 1,
-            transform: [{ scale: pressed ? 0.98 : 1 }],
+            direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+            backgroundColor: c.surface,
+            borderColor: isDark ? `${c.border}35` : `${c.border}50`,
+            shadowColor: isDark ? '#000000' : c.primary,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: isDark ? 0.2 : 0.05,
+            shadowRadius: 8,
+            elevation: isDark ? 4 : 2,
+            opacity: pressed ? 0.92 : 1,
+            transform: [{ scale: pressed ? 0.985 : 1 }],
+            overflow: 'hidden',
           },
         ]}
+        android_ripple={{ color: `${c.accent}12`, foreground: true }}
       >
         {/* Reference Badge */}
-        <View
+        {/* <View
           style={[
             styles.badge,
             {
-              backgroundColor: isDark
-                ? `${Colors[theme].success}20`
-                : `${Colors[theme].success}15`,
-              borderColor: isDark
-                ? `${Colors[theme].success}30`
-                : `${Colors[theme].success}20`,
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
+              backgroundColor: c.successMuted,
+              borderColor: isDark ? `${c.success}25` : `${c.success}20`,
             },
           ]}
         >
           <Text
-            style={[styles.badgeText, { color: Colors[theme].successText }]}
+            style={[
+              styles.badgeText,
+              {
+                color: c.successText,
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
+            ]}
           >
             {translatedText?.explore?.content.card.reference} • #
             {item?.headerData?.ID}
           </Text>
-        </View>
+        </View> */}
 
         {/* Content Text */}
         <Text
-          style={[styles.cardText, { color: Colors[theme].secondary }]}
+          style={[
+            styles.cardText,
+            {
+              color: c.secondary,
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+            },
+          ]}
           numberOfLines={5}
         >
           {item?.content}
@@ -68,17 +93,40 @@ const Content = memo(
         <View
           style={[
             styles.readMoreRow,
-            { flexDirection: isRTL ? 'row-reverse' : 'row' },
+            {
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+
+              flexDirection: isRTL ? 'row-reverse' : 'row',
+              borderTopColor: isDark ? `${c.border}30` : `${c.border}50`,
+            },
           ]}
         >
-          <Text style={{ color: Colors[theme].tertiary, fontSize: 13 }}>
+          <Text
+            style={[
+              styles.readMoreText,
+              {
+                color: c.accent,
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
+            ]}
+          >
             {translatedText?.explore?.content.card.readMore}
           </Text>
-          <MaterialCommunityIcons
-            name={isRTL ? 'arrow-left' : 'arrow-right'}
-            size={16}
-            color={Colors[theme].accent}
-          />
+          <View
+            style={[
+              styles.arrowContainer,
+              {
+                backgroundColor: `${c.accent}10`,
+                direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name={isRTL ? 'arrow-left' : 'arrow-right'}
+              size={18}
+              color={c.accent}
+            />
+          </View>
         </View>
       </Pressable>
     );
@@ -86,41 +134,34 @@ const Content = memo(
     // ── States ──
     if (firstSearch) {
       return (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: isDark
-                ? `${Colors[theme].surface}40`
-                : `${Colors[theme].surface}60`,
-              borderColor: isDark
-                ? `${Colors[theme].border}20`
-                : `${Colors[theme].border}40`,
-            },
-          ]}
-        >
-          <Text style={[styles.heroTitle, { color: Colors[theme].primary }]}>
+        <View style={[styles.container, containerBase, styles.centeredState]}>
+          <View
+            style={[
+              styles.stateIconBox,
+              { backgroundColor: isDark ? `${c.accent}12` : `${c.accent}10` },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="book-open-page-variant"
+              size={32}
+              color={c.accent}
+            />
+          </View>
+          <Text style={[styles.heroTitle, { color: c.primary }]}>
             {translatedText?.explore?.content.heroTitle}
           </Text>
+          {translatedText?.explore?.content.heroSubtitle ? (
+            <Text style={[styles.heroSubtitle, { color: c.tertiary }]}>
+              {translatedText?.explore?.content.heroSubtitle}
+            </Text>
+          ) : null}
         </View>
       );
     }
 
     if (hadithLoading) {
       return (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: isDark
-                ? `${Colors[theme].surface}40`
-                : `${Colors[theme].surface}60`,
-              borderColor: isDark
-                ? `${Colors[theme].border}20`
-                : `${Colors[theme].border}40`,
-            },
-          ]}
-        >
+        <View style={[styles.container, containerBase, styles.centeredState]}>
           <Loader label={translatedText?.explore?.content.loading.label} />
         </View>
       );
@@ -128,19 +169,12 @@ const Content = memo(
 
     if (networkError) {
       return (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: isDark
-                ? `${Colors[theme].surface}40`
-                : `${Colors[theme].surface}60`,
-              borderColor: isDark
-                ? `${Colors[theme].border}20`
-                : `${Colors[theme].border}40`,
-            },
-          ]}
-        >
+        <View style={[styles.container, containerBase, styles.centeredState]}>
+          <View
+            style={[styles.stateIconBox, { backgroundColor: c.errorMuted }]}
+          >
+            <MaterialCommunityIcons name="wifi-off" size={32} color={c.error} />
+          </View>
           <Toast
             toastTheme="error"
             title={translatedText?.explore?.content.error.title}
@@ -152,19 +186,23 @@ const Content = memo(
 
     if (hadithResult?.length === 0) {
       return (
-        <View
-          style={[
-            styles.container,
-            {
-              backgroundColor: isDark
-                ? `${Colors[theme].surface}40`
-                : `${Colors[theme].surface}60`,
-              borderColor: isDark
-                ? `${Colors[theme].border}20`
-                : `${Colors[theme].border}40`,
-            },
-          ]}
-        >
+        <View style={[styles.container, containerBase, styles.centeredState]}>
+          <View
+            style={[
+              styles.stateIconBox,
+              {
+                backgroundColor: isDark
+                  ? `${c.quaternary}15`
+                  : `${c.quaternary}12`,
+              },
+            ]}
+          >
+            <MaterialCommunityIcons
+              name="text-box-search-outline"
+              size={32}
+              color={c.quaternary}
+            />
+          </View>
           <Toast
             allowClose={false}
             title={translatedText?.explore?.content.empty.title}
@@ -174,78 +212,99 @@ const Content = memo(
     }
 
     return (
-      <View
-        style={[
-          styles.container,
-          {
-            backgroundColor: isDark
-              ? `${Colors[theme].surface}40`
-              : `${Colors[theme].surface}60`,
-            borderColor: isDark
-              ? `${Colors[theme].border}20`
-              : `${Colors[theme].border}40`,
-          },
-        ]}
-      >
-        <FlatList
-          data={hadithResult}
-          keyExtractor={(item, i) => item?.id?.toString() || i.toString()}
-          renderItem={renderItem}
-          contentContainerStyle={styles.listContent}
-          showsVerticalScrollIndicator={false}
-        />
+      <View className="mt-6">
+        <View className="flex gap-8">
+          {hadithResult?.map((item) => renderItem(item))}
+        </View>
       </View>
     );
   },
 );
-Content.displayName = 'ContentNormal';
 
+Content.displayName = 'ContentNormal';
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    minHeight: 300,
-    borderRadius: 16,
-    padding: 16,
+    minHeight: 320,
+    borderRadius: 20,
+    padding: 20,
     borderWidth: 1,
   },
+  centeredState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 64,
+    gap: 16,
+  },
+  stateIconBox: {
+    width: 64,
+    height: 64,
+    borderRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 4,
+  },
   heroTitle: {
-    fontSize: 28,
-    fontWeight: '700',
+    fontSize: 32,
+    fontWeight: '800',
     textAlign: 'center',
-    lineHeight: 38,
-    marginTop: 80,
-    marginBottom: 80,
-    paddingHorizontal: 20,
+    lineHeight: 44,
+    letterSpacing: -0.5,
+    paddingHorizontal: 12,
+  },
+  heroSubtitle: {
+    fontSize: 15,
+    textAlign: 'center',
+    lineHeight: 24,
+    paddingHorizontal: 24,
   },
   listContent: {
-    gap: 12,
-    paddingBottom: 20,
+    gap: 16,
+    paddingBottom: 24,
   },
   card: {
     borderRadius: 16,
-    padding: 18,
+    padding: 20,
     borderWidth: 1,
-    gap: 12,
+    gap: 14,
   },
   badge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12,
-    paddingVertical: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 999,
     borderWidth: 1,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: 11,
     fontWeight: '700',
+    letterSpacing: 0.3,
   },
   cardText: {
-    fontSize: 15,
-    lineHeight: 26,
+    fontSize: 16,
+    lineHeight: 28,
+    fontWeight: '400',
   },
   readMoreRow: {
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 4,
+    marginTop: 6,
+    paddingTop: 12,
+    borderTopWidth: 1,
+  },
+  readMoreText: {
+    fontSize: 14,
+    fontWeight: '600',
+    letterSpacing: 0.2,
+    flex: 1,
+  },
+  arrowContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

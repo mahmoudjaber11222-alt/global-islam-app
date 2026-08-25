@@ -399,6 +399,8 @@ export default {
     },
   },
   other: {
+    note: 'Bemærkning',
+    theLanguage: 'sproget',
     part: 'Del',
     translation: 'Oversættelse',
     verse: 'Vers',

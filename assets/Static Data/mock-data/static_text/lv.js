@@ -395,6 +395,8 @@ export default {
     },
   },
   other: {
+    note: 'Piezīme',
+    theLanguage: 'valoda',
     part: 'Daļa',
     translation: 'Tulkojums',
     verse: 'Pants',

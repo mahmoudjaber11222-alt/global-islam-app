@@ -1,4 +1,5 @@
 import useNextPrayer from '@/src/hooks/useNextPrayer';
+import useStaticText from '@/src/hooks/useStaticText';
 import HomeScreen from '@/src/screens/HomeScreen';
 import { router } from 'expo-router';
 import { View } from 'react-native';
@@ -9,9 +10,12 @@ export default function Home() {
   const { nextPrayerTimes, nextPrayer } = useNextPrayer();
   const { theme } = useAppTheme();
   const c = getThemeColors(theme);
-
+  const { translatedText } = useStaticText();
   return (
-    <View style={{ flex: 1, backgroundColor: c.background }}>
+    <View
+      className="w-full px-2"
+      style={{ flex: 1, backgroundColor: c.background }}
+    >
       <HomeScreen
         hadith={{ arabic: '', grade: '', narrator: '', source: '', text: '' }}
         nextPrayer={{

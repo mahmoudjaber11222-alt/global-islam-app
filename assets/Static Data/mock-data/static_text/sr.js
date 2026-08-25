@@ -392,6 +392,8 @@ export default {
     },
   },
   other: {
+    note: 'Напомена',
+    theLanguage: 'језик',
     part: 'Део',
     translation: 'Превод',
     verse: 'Стих',

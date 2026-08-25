@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import useHadith from './useHadith';
-import useInput from './useInput';
 import useLanguage from './useLanguage';
 // import useQuran from "../../../hooks/useQuran";
 
@@ -68,7 +67,7 @@ export default function useExplore() {
     seGetPlaylist();
   }, [selectedLanguage]);
 
-  const [searchValue, handleChange] = useInput('');
+  const [searchValue, handleChange] = useState('');
   const [firstSearch, setFirstSearch] = useState(true);
   const [error, setError] = useState('');
   const navigation = useNavigation();

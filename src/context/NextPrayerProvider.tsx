@@ -15,6 +15,9 @@ type NextPrayerContextType = {
   prayerData: any;
   nextPrayerTimes: NextPrayerType;
   mainPrayers: string[];
+  currentHours: string;
+  currentMin: string;
+  handleAthanScreenShown: (value: boolean) => void;
 };
 
 export const nextPrayerContext = createContext<NextPrayerContextType | null>(
@@ -53,6 +56,7 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
   const { dataPrecise: prayerData, onLastPrayerCome } = usePrayer();
   const [now, setNow] = useState<Date>(new Date());
   const [showAthanScreen, setShowAthanScreen] = useState(false);
+  const [isAdhanScreenShown, setIsAdhanScreenShown] = useState<boolean>(false);
   const [nextPrayerTimes, setNextPrayerTimes] = useState<NextPrayerType>({
     leftHours: '00',
     leftSeconds: '00',
@@ -121,16 +125,19 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     se();
   }, [fetchedDate, safeTimingsCopy, preNotification, selectedReciter?.id]);
   const currentMin = now.getMinutes();
-  useEffect(() => {
-    async function se() {
-      const result: null | object = await shouldShowAthanScreen();
+  const currentHours = now.getHours();
 
-      if (result) {
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      const result: null | object = await shouldShowAthanScreen();
+      if (result && !isAdhanScreenShown) {
+        setIsAdhanScreenShown(true);
         router.push('/(tabs)/athan');
       }
-    }
-    se();
-  }, [currentMin]);
+    }, 1000 * 30);
+
+    return () => clearInterval(intervalId);
+  }, [isAdhanScreenShown]);
 
   useEffect(() => {
     if (prayerData && prayerData.ok) {
@@ -169,7 +176,6 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
       });
     }
   }, [nextPrayer, prayerData, now]);
-  useEffect(() => {}, []);
   const values = {
     showAthan: showAthanScreen,
     nextPrayer,
@@ -178,6 +184,11 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     mainPrayers,
     showAthanScreen,
     athanMeta,
+    currentHours: currentHours + '',
+    currentMin: currentMin + '',
+    handleAthanScreenShown: (value: boolean): void => {
+      setIsAdhanScreenShown(value);
+    },
   };
   return (
     <nextPrayerContext.Provider value={values}>

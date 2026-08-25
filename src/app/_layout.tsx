@@ -1,6 +1,7 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 // import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { useFonts } from 'expo-font';
 import { PaperProvider } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import '../../global.css';
@@ -15,6 +16,9 @@ import { StaticTextContext } from '../context/StaticTextContext';
 import { ThemeProvider } from '../context/ThemeProvider';
 
 export default function RootLayout() {
+  const [fontsLoaded] = useFonts({
+    quran_font: require('@/assets/Static Data/Fonts/quranic/quran.ttf'),
+  });
   //   useEffect(() => {
   //     NavigationBar.setVisibilityAsync('hidden');
   //     NavigationBar.setBehaviorAsync('overlay-swipe');
@@ -37,7 +41,7 @@ export default function RootLayout() {
                       <NextPrayerProvider>
                         <ThemeProvider>
                           <Stack screenOptions={{ headerShown: false }}>
-                            {/* <Stack.Screen name="splash" /> */}
+                            <Stack.Screen name="splash" />
                             <Stack.Screen name="location" />
                             <Stack.Screen name="(tabs)" />
                             <Stack.Screen

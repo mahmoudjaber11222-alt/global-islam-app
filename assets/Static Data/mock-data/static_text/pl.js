@@ -405,6 +405,8 @@ export default {
     },
   },
   other: {
+    note: 'Uwaga',
+    theLanguage: 'język',
     part: 'Część',
     translation: 'Tłumaczenie',
     verse: 'Werset',

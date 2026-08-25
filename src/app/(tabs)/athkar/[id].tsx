@@ -15,7 +15,6 @@ import {
   Text,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { getThemeColors } from '../../../constants/theme';
 import { useAppTheme } from '../../../context/ThemeProvider';
 import stripTashkil from '../../utils/removeTashkil';
@@ -426,11 +425,7 @@ export default function ThikrDetail() {
   );
 
   return (
-    <SafeAreaView
-      className="flex-1"
-      style={{ backgroundColor: c.background }}
-      edges={['top']}
-    >
+    <View className="flex-1" style={{ backgroundColor: c.background }}>
       {/* Header with Icon Back Button */}
       <Animated.View
         className="px-5 pt-3 pb-4"
@@ -511,10 +506,10 @@ export default function ThikrDetail() {
             className="text-[13px] tracking-wide"
             style={{ color: c.tertiary }}
           >
-            Loading...
+            {translatedText?.ai?.loading?.label}
           </Text>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }

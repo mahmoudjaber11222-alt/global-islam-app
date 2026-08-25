@@ -389,6 +389,8 @@ export default {
     },
   },
   other: {
+    note: 'Примітка',
+    theLanguage: 'мова',
     part: 'Частина',
     translation: 'Переклад',
     verse: 'Вірш',

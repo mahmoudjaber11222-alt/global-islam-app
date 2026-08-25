@@ -136,6 +136,27 @@ export default function TabsLayout() {
             ),
           }}
         />
+        <Tabs.Screen
+          name={'learn'}
+          options={{
+            href: null,
+            title: translatedText?.navbar?.routes?.learn,
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="book-open" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Tabs.Screen
+          name={'compare'}
+          options={{
+            href: null,
+            title: translatedText?.compareRelg?.staticText?.navbar,
+            tabBarIcon: ({ color, size }) => (
+              <Feather name="git-compare" size={size} color={color} />
+            ),
+          }}
+        />
         {/* Settings */}
         <Tabs.Screen
           name="settings"

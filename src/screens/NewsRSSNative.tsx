@@ -124,15 +124,15 @@ export default function NewsRSSNative() {
         }),
       );
 
-      try {
-        const label = await translateText('Muslims News', {
-          from: 'en',
-          to: selectedLanguage,
-        });
-        setTitleLabel(label);
-      } catch {
-        setTitleLabel('Muslims News');
-      }
+      // try {
+      //   const label = await translateText('Muslims News', {
+      //     from: 'en',
+      //     to: selectedLanguage,
+      //   });
+      //   setTitleLabel(label);
+      // } catch {
+      //   setTitleLabel('Muslims News');
+      // }
 
       setTranslatedTitles(translations);
       setTranslationsReady(true);
@@ -254,7 +254,7 @@ export default function NewsRSSNative() {
           className="px-4 h-full items-center justify-center shrink-0"
           style={{ backgroundColor: c.accent }}
         >
-          <Animated.Text
+          {/* <Animated.Text
             className="text-[11px] font-bold tracking-[1.5px] uppercase"
             style={{
               color: c.background,
@@ -263,7 +263,7 @@ export default function NewsRSSNative() {
             }}
           >
             {titleLabel}
-          </Animated.Text>
+          </Animated.Text> */}
         </View>
 
         {/* Scrolling news line */}

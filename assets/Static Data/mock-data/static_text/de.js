@@ -408,6 +408,8 @@ export default {
     },
   },
   other: {
+    note: 'Hinweis',
+    theLanguage: 'die Sprache',
     part: 'Teil',
     translation: 'Übersetzung',
     verse: 'Vers',

@@ -37,7 +37,7 @@ function VerseCard({
     >
       {/* Verse Number Badge */}
       <View className="flex-row justify-end mb-3">
-        <View
+        {/* <View
           className="border rounded-lg px-3 py-1.5"
           style={{ backgroundColor: c.surface2, borderColor: c.border2 }}
         >
@@ -47,16 +47,20 @@ function VerseCard({
           >
             {index + 1}
           </Text>
-        </View>
+        </View> */}
       </View>
 
       {/* Arabic Verse */}
       <Text
-        className="text-right text-[22px] leading-[42px] font-light"
-        style={{ writingDirection: 'rtl', color: c.primary }}
+        className="text-right text-[22px] leading-[42px]"
+        style={{
+          fontFamily: 'quran_font',
+          writingDirection: 'rtl',
+          color: c.primary,
+        }}
       >
         {arVerse}
-        <Text style={{ color: c.accent }}> ۝</Text>
+        <Text style={{ color: c.accent }}> ({index + 1})</Text>
       </Text>
 
       {/* Divider */}

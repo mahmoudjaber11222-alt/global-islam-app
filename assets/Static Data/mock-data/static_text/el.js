@@ -395,6 +395,8 @@ export default {
     },
   },
   other: {
+    note: 'Σημείωση',
+    theLanguage: 'η γλώσσα',
     part: 'Μέρος',
     translation: 'Μετάφραση',
     verse: 'Στίχος',

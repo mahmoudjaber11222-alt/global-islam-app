@@ -389,6 +389,8 @@ export default {
     },
   },
   other: {
+    note: '备注',
+    theLanguage: '语言',
     part: '部分',
     translation: '翻译',
     verse: '经文',

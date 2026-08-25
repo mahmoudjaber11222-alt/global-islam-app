@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Pressable, ScrollView, Text, View } from 'react-native';
 import { ActivityIndicator } from 'react-native-paper';
 import {
@@ -493,10 +493,6 @@ export const PrayerList: React.FC<PrayerListProps> = ({
   const { translatedText } = useStaticText();
   const { prayerData, nextPrayer, mainPrayers, nextPrayerTimes } =
     useNextPrayer();
-
-  useEffect(() => {
-    console.log(prayerData, nextPrayer, mainPrayers, nextPrayerTimes);
-  }, [prayerData, nextPrayer, mainPrayers, nextPrayerTimes]);
 
   return (
     <ScrollView

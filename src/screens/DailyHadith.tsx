@@ -56,6 +56,7 @@ const DailyHadith: React.FC = () => {
   const { translatedText } = useStaticText();
 
   const [hadith, setHadith] = useState<any>(null);
+  const [isFallback, setFallback] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [expanded, setExpanded] = useState(false);
@@ -86,23 +87,25 @@ const DailyHadith: React.FC = () => {
       const hadithId = HADITH_IDS[seed % HADITH_IDS.length];
 
       const response = await fetch(
-        `https://hadeethenc.com/api/v1/hadeeths/one/?language=${selectedLanguage}&id=${hadithId}`,
+        `https://hadeethenc.com/api/v1/hadeeths/one/?language=${isFallback ? 'en' : selectedLanguage}&id=${hadithId}`,
       );
       if (!response.ok) throw new Error('Failed to fetch hadith');
       const data = await response.json();
       if (!data?.hadeeth) throw new Error('Invalid hadith response');
-
       setHadith(normalizeHadith(data));
     } catch (err) {
       console.error(err);
-      setError('Unable to load Hadith of the Day');
+      setFallback(true);
+      setError('Unable to load Hadith of the Day in specified language');
     } finally {
+      // setFallback(false);
       setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchHadith();
+    setFallback(false);
   }, [selectedLanguage]);
 
   // ─── LOADING STATE ───
@@ -184,7 +187,7 @@ const DailyHadith: React.FC = () => {
 
   return (
     <View
-      className="rounded-2xl p-6 mb-6 overflow-hidden"
+      className=" p-6 mb-6 overflow-hidden"
       style={{
         backgroundColor: c.surface,
         borderWidth: 1,
@@ -237,7 +240,7 @@ const DailyHadith: React.FC = () => {
             className="text-[11px] font-semibold"
             style={{ color: c.tertiary }}
           >
-            {selectedLanguage?.toUpperCase()}
+            {isFallback ? 'EN' : selectedLanguage?.toUpperCase()}
           </Text>
         </View>
       </View>
@@ -562,11 +565,6 @@ const DailyHadith: React.FC = () => {
             </Text>
           ) : null}
         </View>
-        <Ionicons
-          name={expanded ? 'chevron-up' : 'chevron-down'}
-          size={16}
-          color={c.tertiary}
-        />
       </View>
     </View>
   );

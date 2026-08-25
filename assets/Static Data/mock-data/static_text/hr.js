@@ -393,6 +393,8 @@ export default {
     },
   },
   other: {
+    note: 'Bilješka',
+    theLanguage: 'jezik',
     part: 'Dio',
     translation: 'Prijevod',
     verse: 'Stih',

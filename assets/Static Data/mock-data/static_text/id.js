@@ -388,6 +388,8 @@ export default {
     },
   },
   other: {
+    note: 'Catatan',
+    theLanguage: 'bahasa',
     part: 'Bagian',
     translation: 'Terjemahan',
     verse: 'Ayat',

@@ -387,6 +387,8 @@ export default {
     },
   },
   other: {
+    note: 'Nota',
+    theLanguage: 'bahasa',
     part: 'Bahagian',
     translation: 'Terjemahan',
     verse: 'Ayat',

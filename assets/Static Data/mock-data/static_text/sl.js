@@ -391,6 +391,8 @@ export default {
     },
   },
   other: {
+    note: 'Opomba',
+    theLanguage: 'jezik',
     part: 'Del',
     translation: 'Prevod',
     verse: 'Verz',

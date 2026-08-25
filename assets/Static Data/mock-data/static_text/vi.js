@@ -379,6 +379,8 @@ export default {
     },
   },
   other: {
+    note: 'Ghi chú',
+    theLanguage: 'ngôn ngữ',
     part: 'Phần',
     translation: 'Bản dịch',
     verse: 'Câu',

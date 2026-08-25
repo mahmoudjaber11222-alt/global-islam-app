@@ -1,6 +1,6 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useCallback, useState } from 'react';
-import { ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import SettingsRow from '../app/(tabs)/settings/SettingsRow';
 import Content from '../components/Hadith/Content';
 import ContentNormal from '../components/Hadith/ContentNormal';
 import FilterBar from '../components/Hadith/FilterBar';
@@ -10,12 +10,11 @@ import Toast from '../components/common/Toast';
 import { Colors } from '../constants/theme';
 import { useAppTheme } from '../context/ThemeProvider';
 import useExplore from '../hooks/useExplore';
-import useLanguage from '../hooks/useLanguage';
 import useStaticText from '../hooks/useStaticText';
 function Explore() {
   const { theme, isDark } = useAppTheme();
-  const { selectedLanguage } = useLanguage();
-  const { data, handleres, errors, loaderes } = useExplore(selectedLanguage);
+  // const { selectedLanguage } = useLanguage();
+  const { data, handleres, errors, loaderes } = useExplore();
   const { translatedText } = useStaticText();
 
   // Replace URL params with local state
@@ -25,6 +24,11 @@ function Explore() {
     setAdvanceMode((prev) => !prev);
   }, []);
 
+  useCallback(() => {
+    if (!data.searchValue) {
+      handleres.handleHadithResult([]);
+    }
+  }, [data.searchValue, handleres]);
   return (
     <View
       style={[styles.container, { backgroundColor: Colors[theme].background }]}
@@ -33,72 +37,34 @@ function Explore() {
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
       >
-        <Header />
+        <Header
+          title={translatedText?.explore?.header?.title}
+          subtitle={translatedText?.explore?.header?.subtitle}
+          titleStyle={{ letterSpacing: -1.2 }}
+          subtitleStyle={{ textTransform: 'capitalize' }}
+        />
 
         {/* ═══════ MODE SWITCH ═══════ */}
-        <View
-          style={[
-            styles.modeSwitch,
-            {
-              backgroundColor: isDark
-                ? `${Colors[theme].surface}60`
-                : `${Colors[theme].surface}80`,
-              borderColor: isDark
-                ? `${Colors[theme].border}30`
-                : `${Colors[theme].border}50`,
-            },
-          ]}
-        >
-          <View style={styles.modeInfo}>
-            <View
-              style={[
-                styles.modeIconBox,
-                {
-                  backgroundColor: advanceMode
-                    ? isDark
-                      ? `${Colors[theme].accent}20`
-                      : `${Colors[theme].accent}15`
-                    : Colors[theme].surface2,
-                },
-              ]}
-            >
-              <MaterialCommunityIcons
-                name={advanceMode ? 'sparkles' : 'filter-variant'}
-                size={18}
-                color={
-                  advanceMode ? Colors[theme].accent : Colors[theme].tertiary
-                }
-              />
-            </View>
-            <View>
-              <Text
-                style={[styles.modeTitle, { color: Colors[theme].primary }]}
-              >
-                {advanceMode
-                  ? translatedText?.switch?.title?.advanced
-                  : translatedText?.switch?.title?.normal}
-              </Text>
-              <Text
-                style={[styles.modeDesc, { color: Colors[theme].tertiary }]}
-              >
-                {advanceMode
-                  ? translatedText?.switch?.description?.advanced
-                  : translatedText?.switch?.description?.normal}
-              </Text>
-            </View>
-          </View>
-
-          <Switch
-            value={advanceMode}
-            onValueChange={toggleMode}
-            trackColor={{
-              false: Colors[theme].quaternary,
-              true: Colors[theme].accent,
-            }}
-            thumbColor={Colors[theme].surface}
-            ios_backgroundColor={Colors[theme].quaternary}
-          />
-        </View>
+        <SettingsRow
+          icon={advanceMode ? 'sparkles' : 'options'}
+          iconColor={
+            advanceMode ? Colors[theme].accent : Colors[theme].tertiary
+          }
+          title={
+            advanceMode
+              ? translatedText?.switch?.title?.advanced
+              : translatedText?.switch?.title?.normal
+          }
+          subtitle={
+            advanceMode
+              ? translatedText?.switch?.description?.advanced
+              : translatedText?.switch?.description?.normal
+          }
+          isSwitch
+          switchValue={advanceMode}
+          onSwitchChange={toggleMode}
+          c={Colors[theme]}
+        />
 
         {/* ═══════ ADVANCED MODE CONTENT ═══════ */}
         {advanceMode && (

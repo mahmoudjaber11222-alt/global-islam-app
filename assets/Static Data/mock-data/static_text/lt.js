@@ -389,6 +389,8 @@ export default {
     },
   },
   other: {
+    note: 'Pastaba',
+    theLanguage: 'kalba',
     part: 'Dalis',
     translation: 'Vertimas',
     verse: 'Eilutė',

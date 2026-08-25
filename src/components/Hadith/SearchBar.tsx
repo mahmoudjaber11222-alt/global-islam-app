@@ -5,6 +5,7 @@ import { useAppTheme } from '../../context/ThemeProvider';
 import useLanguage from '../../hooks/useLanguage';
 import useStaticText from '../../hooks/useStaticText';
 import Button from '../common/Button';
+
 function SearchBar({
   disabled = false,
   value,
@@ -17,120 +18,114 @@ function SearchBar({
   const isRTL = selectedLanguage === 'ar';
 
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          backgroundColor: isDark
-            ? `${Colors[theme].surface}70`
-            : `${Colors[theme].surface}80`,
-          borderColor: isDark
-            ? `${Colors[theme].border}40`
-            : `${Colors[theme].border}60`,
-        },
-      ]}
-    >
+    <View style={[]}>
       {/* Top accent line */}
-      <View
-        style={[
-          styles.topLine,
-          { backgroundColor: Colors[theme].accent + '60' },
-        ]}
-      />
+      <View style={[styles.topLine]} />
 
-      <View style={styles.inner}>
+      <View>
         {/* Heading */}
-        <View
-          style={[
-            styles.headingRow,
-            { flexDirection: isRTL ? 'row-reverse' : 'row' },
-          ]}
-        >
-          <View
-            style={[
-              styles.iconBox,
-              {
-                backgroundColor: Colors[theme].success,
-                shadowColor: Colors[theme].success,
-                shadowOffset: { width: 0, height: 8 },
-                shadowOpacity: 0.3,
-                shadowRadius: 25,
-                elevation: 6,
-              },
-            ]}
-          >
-            <MaterialCommunityIcons
-              name="sparkles"
-              size={20}
-              color={Colors[theme].surface}
-            />
-          </View>
-
-          <View style={{ flex: 1 }}>
-            <Text style={[styles.title, { color: Colors[theme].primary }]}>
+        <View style={[{ flexDirection: isRTL ? 'row-reverse' : 'row' }]}>
+          <View style={{ flex: 1, marginHorizontal: 12 }}>
+            <Text
+              style={[
+                styles.title,
+                {
+                  color: Colors[theme].primary,
+                  fontWeight: '700',
+                  letterSpacing: 0.3,
+                },
+              ]}
+            >
               {translatedText?.explore?.searchBar?.title}
             </Text>
-            <Text style={[styles.subtitle, { color: Colors[theme].tertiary }]}>
+            <Text
+              style={[
+                styles.subtitle,
+                {
+                  color: Colors[theme].tertiary,
+                  marginTop: 4,
+                  lineHeight: 20,
+                },
+              ]}
+            >
               {translatedText?.explore?.searchBar?.subtitle}
             </Text>
           </View>
         </View>
 
         {/* Search Row */}
-        <View style={styles.searchRow}>
-          <View style={styles.inputWrapper}>
+        <View style={[styles.searchRow, { gap: 10, alignItems: 'center' }]}>
+          <View className="flex flex-row items-center">
             <MaterialCommunityIcons
+              className="mt-4"
               name="magnify"
-              size={20}
-              color={Colors[theme].quaternary}
+              size={18}
+              color={Colors[theme].tertiary}
               style={[
                 styles.inputIcon,
-                { left: isRTL ? undefined : 16, right: isRTL ? 16 : undefined },
+                {
+                  left: isRTL ? undefined : 14,
+                  right: isRTL ? 14 : undefined,
+                  opacity: 0.85,
+                },
               ]}
             />
             <TextInput
+              className="mt-4 "
               value={value}
               onChangeText={handleChange}
               placeholder={translatedText?.explore?.searchBar?.placeholder}
               editable={!disabled}
-              placeholderTextColor={Colors[theme].quaternary}
+              placeholderTextColor={Colors[theme].quinary}
               textAlign={isRTL ? 'right' : 'left'}
               style={[
                 styles.input,
                 {
-                  backgroundColor: Colors[theme].surface,
+                  backgroundColor: Colors[theme].surface2,
                   borderColor: Colors[theme].border,
                   color: Colors[theme].primary,
-                  paddingLeft: isRTL ? 16 : 48,
-                  paddingRight: isRTL ? 48 : 16,
+                  fontSize: 12,
+                  fontWeight: '400',
+                  paddingLeft: isRTL ? 14 : 46,
+                  paddingRight: isRTL ? 46 : 14,
+                  height: 46,
+                  borderRadius: 10,
+                  borderWidth: 1,
                 },
               ]}
             />
           </View>
 
-          <Button
-            onPress={handleHadithSearch}
-            buttonTheme="accent"
-            size="lg"
-            fullWidth
-          >
-            <View style={styles.btnContent}>
-              <MaterialCommunityIcons
-                name="magnify"
-                size={16}
-                color={isDark ? '#0c0c0e' : '#ffffff'}
-              />
-              <Text
-                style={{
-                  color: isDark ? '#0c0c0e' : '#ffffff',
-                  fontWeight: '600',
-                  fontSize: 15,
-                }}
+          <View className="w-full mt-8">
+            <Button onPress={handleHadithSearch} buttonTheme="accent" size="lg">
+              <View
+                style={[
+                  styles.btnContent,
+                  {
+                    backgroundColor: Colors[theme].accent,
+                    borderRadius: 10,
+                    paddingHorizontal: 18,
+                    paddingVertical: 10,
+                    flexDirection: isRTL ? 'row-reverse' : 'row',
+                    gap: 8,
+                    alignItems: 'center',
+                    height: 46,
+                  },
+                ]}
               >
-                {translatedText?.explore?.searchBar?.button}
-              </Text>
-            </View>
-          </Button>
+                <Text
+                  style={{
+                    color: 'white',
+                    fontWeight: '600',
+                    fontSize: 15,
+                    letterSpacing: 0.2,
+                  }}
+                >
+                  {translatedText?.explore?.searchBar?.button}
+                </Text>
+              </View>
+            </Button>
+          </View>
         </View>
       </View>
     </View>
