@@ -52,7 +52,7 @@ const speechLocaleMap: Record<string, string> = {
 
 type SpeechToTextProps = {
   setText: React.Dispatch<React.SetStateAction<string>>;
-  setError: React.Dispatch<React.SetStateAction<string>>;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
 function SpeechToText({ setText, setError }: SpeechToTextProps) {
@@ -159,54 +159,68 @@ function SpeechToText({ setText, setError }: SpeechToTextProps) {
     );
   });
 
+  useEffect(() => {
+    const diagnose = async () => {
+      try {
+        const available =
+          await ExpoSpeechRecognitionModule.isRecognitionAvailable();
+
+        const services =
+          await ExpoSpeechRecognitionModule.getSpeechRecognitionServices();
+
+        const defaultService =
+          await ExpoSpeechRecognitionModule.getDefaultRecognitionService();
+
+        const assistant =
+          await ExpoSpeechRecognitionModule.getAssistantService();
+
+        console.log('================ SPEECH DEBUG ================');
+        console.log('Available:', available);
+        console.log('Services:', services);
+        console.log('Default:', defaultService);
+        console.log('Assistant:', assistant);
+        console.log('==============================================');
+      } catch (error) {
+        console.error('Speech diagnostic failed:', error);
+      }
+    };
+
+    diagnose();
+  }, []);
+
   const startListening = async () => {
-    if (!supported || listening) return;
+    if (listening) return;
 
     try {
       setError(null);
       setInterim('');
 
-      /*
-       * Request microphone + speech recognition permissions.
-       */
       const permission =
-        await ExpoSpeechRecognitionModule.requestPermissionsAsync();
+        await ExpoSpeechRecognitionModule.requestMicrophonePermissionsAsync();
 
       if (!permission.granted) {
-        setError('Microphone permission was denied.');
+        setError('Microphone permission denied.');
         return;
       }
 
-      /*
-       * Start native speech recognition.
-       */
-      ExpoSpeechRecognitionModule.start({
+      await ExpoSpeechRecognitionModule.start({
         lang: recognizeLanguage,
         interimResults: true,
-        continuous: true,
+        continuous: false,
       });
     } catch (error) {
-      console.error('Could not start speech recognition:', error);
-
-      setListening(false);
-
-      setError(
-        error instanceof Error
-          ? error.message
-          : 'Could not start speech recognition.',
-      );
+      console.error('Speech start error:', error);
+      setError('Failed to start speech recognition.');
     }
   };
 
   const stopListening = () => {
     try {
+      console.log('stop pressed');
       ExpoSpeechRecognitionModule.stop();
     } catch (error) {
       console.error('Could not stop speech recognition:', error);
     }
-
-    setInterim('');
-    setListening(false);
   };
 
   /*

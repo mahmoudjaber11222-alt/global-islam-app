@@ -1,15 +1,15 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Audio } from 'expo-av';
+import { File, Paths } from 'expo-file-system';
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
   useState,
-  useCallback,
 } from 'react';
 import { Animated } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Audio } from 'expo-av';
-import { File, Paths } from 'expo-file-system';
 import { AdhanReciter } from './AdhanReciterSelector';
 
 const STORAGE_KEYS = {

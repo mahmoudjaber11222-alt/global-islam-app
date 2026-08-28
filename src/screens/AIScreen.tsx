@@ -15,7 +15,6 @@ import {
 } from 'react-native';
 import Animated, { FadeIn, FadeInUp } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import SpeechToText from '../components/AI/SpeechToText';
 import Header from '../components/Hadith/Header';
 import { getThemeColors } from '../constants/theme';
 import { useAppTheme } from '../context/ThemeProvider';
@@ -831,7 +830,7 @@ export default function AIScreen() {
             // style={{ backgroundColor: c.accentMuted }}
           >
             <Ionicons name="sparkles" size={16} color={c.accent} />
-            <SpeechToText setError={setError} setText={setSearchValue} />
+            {/* <SpeechToText setError={setError} setText={setSearchValue} /> */}
           </View>
 
           <TextInput

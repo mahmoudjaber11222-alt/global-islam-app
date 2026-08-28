@@ -90,6 +90,7 @@ export default function ShortcutsButton({
       ]}
     >
       <Pressable
+        className="rounded-full"
         onPress={handlePress}
         accessibilityRole="button"
         accessibilityLabel="Open shortcuts"
@@ -117,15 +118,13 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    borderRadius: 999,
-
-    elevation: 6,
+    // borderRadius: 999,
   },
 
   button: {
     width: '100%',
     height: '100%',
-    borderRadius: 999,
+    // borderRadius: 999,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 1,

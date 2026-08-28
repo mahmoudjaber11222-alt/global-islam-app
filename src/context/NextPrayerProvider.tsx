@@ -1,11 +1,13 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as Notifications from 'expo-notifications';
 import { router } from 'expo-router';
 import { createContext, ReactNode, useEffect, useState } from 'react';
 import { shouldShowAthanScreen } from '../app';
 import { requestPermissions } from '../app/Notifications/prayer';
 import { PrayerTimings } from '../app/types/prayer_times';
 import { NextPrayerType } from '../components/NextPrayer';
+import useLanguage from '../hooks/useLanguage';
 import usePrayer from '../hooks/usePrayer';
+import useStaticText from '../hooks/useStaticText';
 import { scheduleAllPrayersForDay } from '../service/notificationService';
 import { useSettings } from './SettingsProvider';
 
@@ -50,6 +52,8 @@ function convertToUnixTime(time: string, date: Date) {
 export function NextPrayerProvider({ children }: { children: ReactNode }) {
   const { preNotification, selectedReciter } = useSettings();
   const [athanMeta, setAthanMeta] = useState(null);
+  const { selectedLanguage } = useLanguage();
+  const { translatedText } = useStaticText();
   // const [] = useState([]);
   // const { schedulePrayers } = usePrayerNotifications();
   // const [preAdhan, setPreAdhan] = useState(AsyncStorage.getItem('@pre_adhan_notification'));
@@ -115,15 +119,31 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
   }, []);
   useEffect(() => {
     async function se() {
-      if (safeTimingsCopy && fetchedDate) {
+      if (safeTimingsCopy && fetchedDate && translatedText) {
         const date = fromISOtoDate(fetchedDate);
-        const soundFile = await AsyncStorage.getItem(selectedReciter.id);
+        // const soundFile = await AsyncStorage.getItem(selectedReciter.id);
+        await scheduleAllPrayersForDay(
+          safeTimingsCopy,
+          date,
+          translatedText,
+          preNotification,
+          'azan.wav',
+        );
+        const scheduled =
+          await Notifications.getAllScheduledNotificationsAsync();
+        // console.log(scheduled);
+        scheduled.forEach((notification) => {
+          const trigger = notification.trigger;
 
-        scheduleAllPrayersForDay(safeTimingsCopy, date, soundFile || 'default');
+          console.log({
+            id: notification.identifier,
+            trigger: new Date(trigger?.value),
+          });
+        });
       }
     }
     se();
-  }, [fetchedDate, safeTimingsCopy, preNotification, selectedReciter?.id]);
+  }, [fetchedDate, safeTimingsCopy, translatedText, preNotification]);
   const currentMin = now.getMinutes();
   const currentHours = now.getHours();
 
@@ -134,6 +154,7 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
         setIsAdhanScreenShown(true);
         router.push('/(tabs)/athan');
       }
+      console.log('excuted', isAdhanScreenShown);
     }, 1000 * 30);
 
     return () => clearInterval(intervalId);

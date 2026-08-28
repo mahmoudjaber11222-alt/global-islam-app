@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Animated, Dimensions, ScrollView, View } from 'react-native';
 // import { View } from '';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { router } from 'expo-router';
@@ -81,11 +82,16 @@ export default function HomeScreen({
         <NewsRSSNative selectedLanguage={selectedLanguage} />
         <ScrollView className="w-full  h-full py-4">
           <HomeItem
-            icon={<Entypo name="controller-next" size={24} color="white" />}
+            icon={<AntDesign name="clock-circle" size={24} color="white" />}
             featured
             imageUrl="https://www.egypttoursplus.com/wp-content/uploads/2025/07/Blue-mosque-in-glorius-sunset-Istanbul-Sultanahmet-park.-The-biggest-mosque-in-Istanbul-of-Sultan-Ahmed-Ottoman-Empire.jpg"
             theme={theme}
-            title={`${translatedText?.prayerApp?.upcoming} - ${nextPrayer.name}`}
+            onPress={() => {
+              router.push('/(tabs)/prayer');
+            }}
+            title={`${translatedText?.prayerApp?.upcoming} - ${
+              translatedText?.prayers?.times[nextPrayer?.name]
+            }`}
             description={`${nextPrayer.hours}:${nextPrayer.minutes}:${nextPrayer.seconds}`}
           />
           <ThikrSection onNavigate={onNavigateAthkar} />
@@ -118,7 +124,7 @@ export default function HomeScreen({
                     onPress() {
                       router.push('/(tabs)/qibla');
                     },
-                    name: 'Compass',
+                    name: translatedText?.qiblaApp?.compass,
                   },
 
                   {
@@ -145,7 +151,7 @@ export default function HomeScreen({
                     onPress() {
                       router.push('/(tabs)/hadith');
                     },
-                    name: 'Hadith Collections',
+                    name: translatedText?.explore?.header?.title,
                   },
 
                   {
@@ -172,7 +178,7 @@ export default function HomeScreen({
                     onPress() {
                       router.push('/(tabs)/quran');
                     },
-                    name: 'Quran',
+                    name: translatedText?.navbar?.routes?.quran,
                   },
 
                   {
@@ -199,7 +205,33 @@ export default function HomeScreen({
                     onPress() {
                       router.push('/(tabs)/ai');
                     },
-                    name: 'AI Assistant',
+                    name: translatedText?.navbar?.routes?.aiAssistant,
+                  },
+                  {
+                    icon: (
+                      <Animated.View
+                        style={{
+                          width: 48,
+                          height: 48,
+                          borderRadius: 16,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          backgroundColor: 'rgba(52, 211, 153, 0.12)',
+                          borderWidth: 1,
+                          borderColor: 'rgba(52, 211, 153, 0.25)',
+                        }}
+                      >
+                        <FontAwesome6
+                          name="readme"
+                          size={iconSize}
+                          color={quranColor}
+                        />
+                      </Animated.View>
+                    ),
+                    onPress() {
+                      router.push('/(tabs)/athkar');
+                    },
+                    name: translatedText?.athkar?.title,
                   },
                 ]}
               />
@@ -211,13 +243,10 @@ export default function HomeScreen({
           style={{}}
         >
           <View
-            className=" rounded-full items-center justify-center "
+            className=""
             style={{
               width: 50,
               height: 50,
-              backgroundColor: Colors[theme].surface3,
-              borderWidth: 4,
-              borderColor: `${Colors[theme].primary}20`,
             }}
           >
             <ShortcutsButton
@@ -225,11 +254,11 @@ export default function HomeScreen({
                 showIconList ? (
                   <Ionicons
                     name="close"
-                    size={22}
+                    size={28}
                     color={Colors[theme].primary}
                   />
                 ) : (
-                  <Entypo name="grid" size={22} color={Colors[theme].primary} />
+                  <Entypo name="grid" size={28} color={Colors[theme].primary} />
                 )
               }
               onPress={onShortcutButtonPress}

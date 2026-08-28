@@ -1,3 +1,4 @@
+import useLanguage from '@/src/hooks/useLanguage';
 import { Link } from 'expo-router';
 import React, { useRef } from 'react';
 import { Animated, ImageBackground, Pressable, Text, View } from 'react-native';
@@ -24,6 +25,7 @@ const HomeItem = ({
   theme = 'dark',
   onPress,
 }: HomeItemProps) => {
+  const { selectedLanguage } = useLanguage();
   const colors = Colors[theme];
   const isLight = theme === 'light';
   const hasImage = featured && !!imageUrl;
@@ -64,7 +66,7 @@ const HomeItem = ({
   const Content = (
     <>
       {/* Image overlay for readability */}
-      {hasImage && <View className="absolute inset-0 bg-black/50" />}
+      {hasImage && <View className="absolute inset-0 bg-black/60" />}
 
       {/* Top accent line */}
       {featured && (
@@ -74,10 +76,14 @@ const HomeItem = ({
         />
       )}
 
-      <View className="relative z-10 flex-row items-center gap-4">
+      <View
+        style={{ direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' }}
+        className="relative z-10 flex-row items-center gap-4"
+      >
         <View
           className="h-11 w-11 items-center justify-center rounded-xl"
           style={{
+            direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
             backgroundColor: hasImage
               ? 'rgba(255,255,255,0.15)'
               : isLight
@@ -90,10 +96,14 @@ const HomeItem = ({
           {icon}
         </View>
 
-        <View className="flex-1 pr-2">
+        <View
+          style={{ direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr' }}
+          className="flex-1 pr-2 gap-4"
+        >
           <Text
-            className="text-[15px] font-semibold mb-0.5"
+            className="text-[20px] mb-0.5"
             style={{
+              direction: selectedLanguage === 'ar' ? 'rtl' : 'ltr',
               color: hasImage
                 ? '#FFFFFF'
                 : isLight
@@ -105,7 +115,7 @@ const HomeItem = ({
             {title}
           </Text>
           <Text
-            className="text-[13px] leading-[18px]"
+            className="text-[18px] leading-[18px]"
             style={{
               color: hasImage
                 ? 'rgba(255,255,255,0.75)'
@@ -119,34 +129,36 @@ const HomeItem = ({
           </Text>
         </View>
 
-        <View
-          className="h-8 w-8 items-center justify-center rounded-full"
-          style={{
-            backgroundColor: hasImage
-              ? 'rgba(255,255,255,0.12)'
-              : isLight
-                ? 'rgba(21,128,61,0.08)'
-                : colors.surface2,
-            borderColor: hasImage
-              ? 'rgba(255,255,255,0.2)'
-              : isLight
-                ? 'rgba(21,128,61,0.2)'
-                : undefined,
-            borderWidth: 1,
-          }}
-        >
-          <Text
+        {!featured && (
+          <View
+            className="h-8 w-8 items-center justify-center rounded-full"
             style={{
-              color: hasImage
-                ? '#FFFFFF'
+              backgroundColor: hasImage
+                ? 'rgba(255,255,255,0.12)'
                 : isLight
-                  ? '#15803D'
-                  : colors.quaternary,
+                  ? 'rgba(21,128,61,0.08)'
+                  : colors.surface2,
+              borderColor: hasImage
+                ? 'rgba(255,255,255,0.2)'
+                : isLight
+                  ? 'rgba(21,128,61,0.2)'
+                  : undefined,
+              borderWidth: 1,
             }}
           >
-            →
-          </Text>
-        </View>
+            <Text
+              style={{
+                color: hasImage
+                  ? '#FFFFFF'
+                  : isLight
+                    ? '#15803D'
+                    : colors.quaternary,
+              }}
+            >
+              →
+            </Text>
+          </View>
+        )}
       </View>
     </>
   );
@@ -162,7 +174,7 @@ const HomeItem = ({
       </View>
     </ImageBackground>
   ) : (
-    <View className="px-5 py-[18px] w-full rounded-2xl overflow-hidden">
+    <View className="px-5 py-4 w-full rounded-2xl overflow-hidden">
       {Content}
     </View>
   );

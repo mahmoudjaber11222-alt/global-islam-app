@@ -1,6 +1,7 @@
 import useLanguage from '@/src/hooks/useLanguage';
 import useStaticText from '@/src/hooks/useStaticText';
 import Feather from '@expo/vector-icons/Feather';
+
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
 import {

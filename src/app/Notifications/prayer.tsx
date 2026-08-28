@@ -64,12 +64,13 @@ export async function requestPermissions() {
 }
 
 // ─── 3. ANDROID CHANNEL ────────────────────────────────────
-export async function setupPrayerChannel() {
+export async function setupPrayerChannel(translatedText = {}) {
   if (!isDevClient || Platform.OS !== 'android') return;
 
+  // importing notification library from expo
   const Notifications = await import('expo-notifications');
   await Notifications.setNotificationChannelAsync('prayer-alarm', {
-    name: 'Prayer Times',
+    name: `prayer-alarm`,
     importance: Notifications.AndroidImportance.MAX,
     vibrationPattern: [0, 500, 200, 500, 200, 500],
     sound: 'adhan.wav',
@@ -89,6 +90,7 @@ export async function schedulePrayerAlarm(
     sound?: string;
     vibrate?: boolean;
   },
+  translatedText = {},
 ) {
   if (!isDevClient) {
     console.warn('Skipping alarm — not in development build');
@@ -102,8 +104,8 @@ export async function schedulePrayerAlarm(
 
   await Notifications.scheduleNotificationAsync({
     content: {
-      title: `🕌 ${prayerName}`,
-      body: 'Time for prayer',
+      title: `🕌 ${translatedText?.prayers?.times[prayerName]}`,
+      body: 'hello',
       sound,
       vibrate: vibrate ? [0, 500, 200, 500] : undefined,
       priority: Notifications.AndroidNotificationPriority.MAX,
