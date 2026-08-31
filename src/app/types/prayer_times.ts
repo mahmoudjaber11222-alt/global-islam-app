@@ -76,6 +76,7 @@ export interface AlAdhanResponse {
   ok: true;
   code: number;
   status: string;
+  fullData: PrayerData[];
   data: {
     timings: PrayerTimings;
     date: {

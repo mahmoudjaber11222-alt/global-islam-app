@@ -8,7 +8,10 @@ import { NextPrayerType } from '../components/NextPrayer';
 import useLanguage from '../hooks/useLanguage';
 import usePrayer from '../hooks/usePrayer';
 import useStaticText from '../hooks/useStaticText';
-import { scheduleAllPrayersForDay } from '../service/notificationService';
+import {
+  cancelAllPrayerNotifications,
+  scheduleAllPrayersForDay,
+} from '../service/notificationService';
 import { useSettings } from './SettingsProvider';
 
 type NextPrayerContextType = {
@@ -57,10 +60,43 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
   // const [] = useState([]);
   // const { schedulePrayers } = usePrayerNotifications();
   // const [preAdhan, setPreAdhan] = useState(AsyncStorage.getItem('@pre_adhan_notification'));
+
+  async function logNotification() {
+    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+
+    console.log('All Scheduled Notifications so far are: ', scheduled.length);
+
+    // scheduled.forEach((notification: any) => {
+    //   const trigger = notification.trigger;
+
+    //   console.log({
+    //     id: notification.identifier,
+    //     trigger: new Date(trigger?.value),
+    //   });
+    // });
+  }
+  async function scheduleFullMonthNotifications(
+    timings: PrayerTimings,
+    date: string,
+    preNotification: boolean,
+  ) {
+    const safeTimingsCopy = safeTimings(timings);
+    const fetchedDate = fromISOtoDate(date);
+    await scheduleAllPrayersForDay(
+      safeTimingsCopy,
+      fetchedDate,
+      translatedText,
+      preNotification,
+      'azan.mp3',
+    );
+    logNotification();
+  }
   const { dataPrecise: prayerData, onLastPrayerCome } = usePrayer();
+
   const [now, setNow] = useState<Date>(new Date());
   const [showAthanScreen, setShowAthanScreen] = useState(false);
   const [isAdhanScreenShown, setIsAdhanScreenShown] = useState<boolean>(false);
+
   const [nextPrayerTimes, setNextPrayerTimes] = useState<NextPrayerType>({
     leftHours: '00',
     leftSeconds: '00',
@@ -117,33 +153,24 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     }, 1000);
     return () => clearInterval(timerId);
   }, []);
-  useEffect(() => {
-    async function se() {
-      if (safeTimingsCopy && fetchedDate && translatedText) {
-        const date = fromISOtoDate(fetchedDate);
-        // const soundFile = await AsyncStorage.getItem(selectedReciter.id);
-        await scheduleAllPrayersForDay(
-          safeTimingsCopy,
-          date,
-          translatedText,
-          preNotification,
-          'azan.wav',
-        );
-        const scheduled =
-          await Notifications.getAllScheduledNotificationsAsync();
-        // console.log(scheduled);
-        scheduled.forEach((notification) => {
-          const trigger = notification.trigger;
 
-          console.log({
-            id: notification.identifier,
-            trigger: new Date(trigger?.value),
-          });
-        });
+  useEffect(() => {
+    if (!prayerData?.ok || !prayerData?.data) return;
+
+    const schedule = async () => {
+      await cancelAllPrayerNotifications();
+
+      for (const item of prayerData.fullData) {
+        await scheduleFullMonthNotifications(
+          item.timings,
+          item.date.gregorian.date,
+          preNotification,
+        );
       }
-    }
-    se();
-  }, [fetchedDate, safeTimingsCopy, translatedText, preNotification]);
+    };
+
+    schedule();
+  }, [prayerData?.ok, preNotification]);
   const currentMin = now.getMinutes();
   const currentHours = now.getHours();
 
@@ -154,7 +181,6 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
         setIsAdhanScreenShown(true);
         router.push('/(tabs)/athan');
       }
-      console.log('excuted', isAdhanScreenShown);
     }, 1000 * 30);
 
     return () => clearInterval(intervalId);
@@ -170,6 +196,7 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
       const nowUnix = now.getTime();
       if (nowUnix >= lastUnix) {
         onLastPrayerCome();
+        console.log('Last prayer come');
       }
     }
   }, [prayerData, now, onLastPrayerCome]);

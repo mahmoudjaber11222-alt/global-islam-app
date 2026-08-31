@@ -4,6 +4,7 @@ import {
   AlAdhanResponseList,
   PrayerTimesError,
 } from '../app/types/prayer_times';
+import { formatDate_isoStringToDate } from '../app/utils/formatter';
 export const storageKey = (
   latitude: number,
   longitude: number,
@@ -26,9 +27,21 @@ export async function getPrayer(
       const dataInCache = await AsyncStorage.getItem(
         storageKey(preciseLocation.latitude, preciseLocation.longitude, date),
       );
-      if (dataInCache) {
+      // console.log('cdi', new Date(date).toDateString());
+      const isoToDate = formatDate_isoStringToDate(date + '');
+      // console.log();
+      const isCurrentMonth = isoToDate.getMonth() === new Date().getMonth();
+      console.log('is cur', isCurrentMonth);
+
+      if (dataInCache && isCurrentMonth) {
         console.log('PRAYERS DATA GET FROM CACHE ✨');
         const re: AlAdhanResponseList = await JSON.parse(dataInCache);
+        // console.log(re);
+        re?.data?.forEach((item) => {
+          console.log(item.date);
+        });
+
+        console.log('cached data length: ', re.data.length);
         const prayerByDate = re?.data?.find(
           (item) => item.date.gregorian.date === date,
         );
@@ -38,10 +51,16 @@ export async function getPrayer(
           console.log('PRAYERS BY DATE RETURNS UNDEFINED');
           return { ok: false, msg: 'no prayers to return' };
         }
-        return { ok: true, status: 'OK', data: prayerByDate, code: 200 };
+        return {
+          ok: true,
+          status: 'OK',
+          data: prayerByDate,
+          code: 200,
+          fullData: re.data,
+        };
       }
       // const URI = `https://api.aladhan.com/v1/timings/${date}?latitude=${preciseLocation.latitude}&longitude=${preciseLocation.longitude}&method=1&school=0`;
-      const fullMonth = `https://api.aladhan.com/v1/calendar/${new Date().getFullYear()}/${new Date().getMonth() + 1}?latitude=${preciseLocation.latitude}&longitude=${preciseLocation.longitude}&method=1&school=0`;
+      const fullMonth = `https://api.aladhan.com/v1/calendar/${isoToDate.getFullYear()}/${isoToDate.getMonth() + 1}?latitude=${preciseLocation.latitude}&longitude=${preciseLocation.longitude}&method=1&school=0`;
       const response: Response = await fetch(fullMonth);
       // const response: Response = await fetch(URI);
 
@@ -84,7 +103,13 @@ export async function getPrayer(
       if (!prayerByDate) {
         return { ok: false, msg: 'no prayers to return' };
       }
-      return { ok: true, status: 'OK', data: prayerByDate, code: 200 };
+      return {
+        ok: true,
+        status: 'OK',
+        data: prayerByDate,
+        code: 200,
+        fullData: result.data,
+      };
     }
     return { ok: false, msg: 'No Location Provided' };
   } catch (err: any) {

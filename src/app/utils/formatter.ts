@@ -5,3 +5,12 @@ export function formatDate_toISOString(date: Date): string {
   console.log(`${day}-${month}-${year}`);
   return `${day}-${month}-${year}`;
 }
+export function formatDate_isoStringToDate(isoString: string): Date {
+  const fDate = new Date();
+  const [day, month, year] = isoString.split('-');
+  fDate.setFullYear(Number(year), Number(month) - 1, Number(day));
+
+  console.log(`${day}-${month}-${year}`);
+  console.log('iso_to_date', fDate);
+  return fDate;
+}

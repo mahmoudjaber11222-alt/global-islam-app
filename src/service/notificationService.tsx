@@ -17,7 +17,7 @@ const PRAYER_CHANNEL_ID = 'prayer-alarm';
 const PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Configure how notifications behave
+// Notification Handler
 // ─────────────────────────────────────────────────────────────────────────────
 
 Notifications.setNotificationHandler({
@@ -30,46 +30,31 @@ Notifications.setNotificationHandler({
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Initialize notification channels
+// Initialize notifications
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function initializeNotifications(): Promise<void> {
-  console.log(
-    '\n================ NOTIFICATION INITIALIZATION ================',
-  );
-
   const { status: existingStatus } = await Notifications.getPermissionsAsync();
-
-  console.log('📱 Existing notification permission:', existingStatus);
 
   let finalStatus = existingStatus;
 
   if (existingStatus !== 'granted') {
     const { status } = await Notifications.requestPermissionsAsync();
     finalStatus = status;
-
-    console.log('📱 Requested notification permission:', finalStatus);
   }
 
   if (finalStatus !== 'granted') {
-    console.error('❌ Notification permissions not granted');
+    console.error('❌ Notifications: permission denied');
     throw new Error('Notification permissions not granted');
   }
 
-  console.log('✅ Notification permission granted');
-
-  // Android notification channel
   if (Platform.OS === 'android') {
-    console.log('🤖 Creating Android notification channel...');
-    console.log('   Channel ID:', PRAYER_CHANNEL_ID);
-
     await Notifications.setNotificationChannelAsync(PRAYER_CHANNEL_ID, {
       name: 'Prayer Alarms',
-
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500, 200, 500],
       lightColor: '#c9a96e',
-      sound: 'azan.wav',
+      sound: 'azan.mp3',
       enableVibrate: true,
       enableLights: true,
       showBadge: false,
@@ -77,24 +62,16 @@ export async function initializeNotifications(): Promise<void> {
       bypassDnd: true,
     });
 
-    console.log('✅ Android notification channel created');
-
-    // Android 12+
     if (Platform.Version >= 31) {
-      console.log('🤖 Android 12+ detected');
-      console.log('⏰ Requesting exact alarm permission...');
-
       await Notifications.requestPermissionsAsync({
         android: {
           allowAlarm: true,
         },
       });
-
-      console.log('✅ Exact alarm permission request completed');
     }
   }
 
-  console.log('============================================================\n');
+  console.log(`🔔 Notifications initialized  |  Permission: ${finalStatus}`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -113,18 +90,6 @@ export async function schedulePrayerNotification(
   },
   audioSource?: string,
 ): Promise<string | void> {
-  console.log('\n------------------------------------------------------------');
-  console.log('🔔 SCHEDULING PRAYER NOTIFICATION');
-  console.log('------------------------------------------------------------');
-
-  console.log('🕌 Prayer:', prayerName);
-  console.log('🕐 Original prayer time:', prayerTime);
-  console.log('📅 Date:', date.toISOString());
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Build trigger date
-  // ───────────────────────────────────────────────────────────────────────────
-
   const [hours, minutes] = prayerTime.split(':').map(Number);
 
   const triggerDate = new Date(date);
@@ -136,92 +101,35 @@ export async function schedulePrayerNotification(
     0,
   );
 
-  console.log('⏰ Scheduled trigger:', triggerDate.toLocaleString());
-
-  console.log(
-    '⏪ Pre-Adhan enabled:',
-    options?.preAdhanTime ? 'YES (15 minutes before)' : 'NO',
-  );
-
-  // Don't schedule if the time has already passed
+  // Don't schedule notifications that have already passed.
   if (triggerDate.getTime() <= Date.now()) {
-    console.log(`⏭️ SKIPPED: ${prayerName} time has already passed`);
-
-    console.log(
-      '------------------------------------------------------------\n',
-    );
-
+    console.log(`   ⏭ ${prayerName}: skipped (time passed)`);
     return '';
   }
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Development / production environment
-  // ───────────────────────────────────────────────────────────────────────────
-
-  console.log('⚙️ Execution environment:', Constants.executionEnvironment);
-  console.log('⚙️ Is native/dev client:', isDevClient);
-
+  // Expo Go cannot schedule native notifications reliably.
   if (!isDevClient) {
-    console.warn('⚠️ Skipping notification because app is running in Expo Go.');
-
-    console.log(
-      '------------------------------------------------------------\n',
-    );
-
+    console.warn(`⚠️ ${prayerName}: skipped (Expo Go)`);
     return;
   }
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Notification options
-  // ───────────────────────────────────────────────────────────────────────────
+  const { sound = 'azan.mp3', vibrate = true } = options || {};
 
-  const { sound = 'azan.wav', vibrate = true } = options || {};
+  const title = translatedText?.prayers?.times?.[prayerName] ?? prayerName;
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // LOCALIZED TITLE + BODY
-  // ───────────────────────────────────────────────────────────────────────────
-
-  const title = `${translatedText?.prayers?.times?.[prayerName] ?? prayerName}`;
-
-  const body = translatedText?.athan?.prayerTime ?? 'It is time for prayer';
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // VERY CLEAR LOCALIZATION LOGS
-  // ───────────────────────────────────────────────────────────────────────────
-
-  console.log('\n🌍 NOTIFICATION LANGUAGE / TEXT');
-  console.log('   ┌────────────────────────────────────────');
-  console.log('   │ Prayer:', prayerName);
-  console.log('   │');
-  console.log('   │ TITLE:');
-  console.log('   │', title);
-  console.log('   │');
-  console.log('   │ BODY:');
-  console.log('   │', body);
-  console.log('   │');
-  console.log('   │ Translation source:');
-  console.log(
-    '   │ prayers.times:',
-    translatedText?.prayers?.times?.[prayerName],
-  );
-  console.log('   │ athan.prayerTime:', translatedText?.athan?.prayerTime);
-  console.log('   └────────────────────────────────────────\n');
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Schedule notification
-  // ───────────────────────────────────────────────────────────────────────────
+  const body = options?.preAdhanTime
+    ? translatedText?.prayerApp?.upcoming
+    : (translatedText?.athan?.prayerTime ?? 'It is time for prayer');
 
   const notificationId = await Notifications.scheduleNotificationAsync({
     content: {
       title,
       body,
       sound,
-
       vibrate: vibrate ? [0, 500, 200, 500] : undefined,
-
       priority: Notifications.AndroidNotificationPriority.MAX,
 
-      categoryIdentifier: PRAYER_CHANNEL_ID,
+      // REMOVED: categoryIdentifier: PRAYER_CHANNEL_ID,
 
       data: {
         prayer: prayerName,
@@ -238,28 +146,9 @@ export async function schedulePrayerNotification(
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
       date: triggerDate,
-
       channelId: Platform.OS === 'android' ? PRAYER_CHANNEL_ID : undefined,
     } as any,
   });
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // SUCCESS LOG
-  // ───────────────────────────────────────────────────────────────────────────
-
-  console.log('\n✅ NOTIFICATION SCHEDULED SUCCESSFULLY');
-  console.log('   ┌────────────────────────────────────────');
-  console.log('   │ ID:', notificationId);
-  console.log('   │ Prayer:', prayerName);
-  console.log('   │ Trigger:', triggerDate.toLocaleString());
-  console.log('   │ Channel:', PRAYER_CHANNEL_ID);
-  console.log('   │ Sound:', sound);
-  console.log('   │ Vibrate:', vibrate);
-  console.log('   │');
-  console.log('   │ TITLE:', title);
-  console.log('   │ BODY:', body);
-  console.log('   └────────────────────────────────────────');
-  console.log('------------------------------------------------------------\n');
 
   return notificationId;
 }
@@ -275,94 +164,56 @@ export async function scheduleAllPrayersForDay(
   preNotification: boolean,
   audioSource?: string,
 ): Promise<string[]> {
-  console.log('\n============================================================');
-  console.log('📅 SCHEDULING ALL PRAYERS');
-  console.log('============================================================');
+  console.log('\n📅 Scheduling prayer notifications');
+  console.log(`   Date: ${date.toDateString()}`);
+  console.log(`   Pre-Adhan: ${preNotification ? 'enabled' : 'disabled'}`);
 
-  console.log('📅 Date:', date.toDateString());
+  const scheduledIds: string[] = [];
+  const storedNotificationsDetails: any[] = [];
 
-  // Cancel existing prayer notifications first
-  console.log('🧹 Cancelling existing prayer notifications...');
+  // Remove previous stored details.
+  await AsyncStorage.removeItem('prayerNotificationsDetails');
 
-  await cancelAllPrayerNotifications();
+  // ───────────────────────────────────────────────────────────────────────────
+  // Android channel
+  // ───────────────────────────────────────────────────────────────────────────
 
-  // Remove the old channel if necessary
   if (Platform.OS === 'android') {
     await Notifications.deleteNotificationChannelAsync(PRAYER_CHANNEL_ID);
 
-    // Recreate the channel after deletion
     await Notifications.setNotificationChannelAsync(PRAYER_CHANNEL_ID, {
       name: 'Prayer Alarms',
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 500, 200, 500, 200, 500],
       lightColor: '#c9a96e',
-      sound: 'azan.wav',
+      sound: 'azan.mp3',
       enableVibrate: true,
       enableLights: true,
       showBadge: false,
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       bypassDnd: true,
     });
-
-    console.log('🔄 Prayer notification channel recreated');
   }
 
-  const scheduledIds: string[] = [];
-
-  const storedNotificationsDetails: any[] = [];
-
-  await AsyncStorage.removeItem('prayerNotificationsDetails');
-
   // ───────────────────────────────────────────────────────────────────────────
-  // Read pre-Adhan preference once
+  // Schedule prayers
   // ───────────────────────────────────────────────────────────────────────────
 
-  const preAdhanValueStr = preNotification;
-  const preAdhanValue = preAdhanValueStr;
-  console.log('PREADHAN VALUE', preAdhanValue);
-  const isPreAdhanNotificationChecked = preAdhanValue;
-
-  console.log(
-    '⏪ Pre-Adhan notification:',
-    isPreAdhanNotificationChecked ? 'ENABLED' : 'DISABLED',
-  );
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Schedule each prayer
-  // ───────────────────────────────────────────────────────────────────────────
-  const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-
-  console.log('\n========== CURRENT SCHEDULED NOTIFICATIONS ==========');
-
-  for (const notification of scheduled) {
-    console.log({
-      id: notification.identifier,
-      title: notification.content.title,
-      body: notification.content.body,
-      data: notification.content.data,
-      trigger: notification.trigger,
-    });
-  }
-
-  console.log('TOTAL:', scheduled.length);
-
-  const scheduleAdhan: Object[] = [];
-  console.log('====================================================\n');
   for (const prayer of PRAYERS) {
-    await setNotifications(preNotification, prayer);
-  }
-
-  async function setNotifications(isPreadhanTrue: boolean, prayer: string) {
     const time = timings[prayer as keyof PrayerTimings]?.split(' ')[0];
+
     if (!time) {
-      console.log(`⏭️ ${prayer}: no time found`);
-      return;
+      console.log(`   ⏭ ${prayer}: no time available`);
+      continue;
     }
+
     const options = {
       sound: audioSource,
       vibrate: true,
       preAdhanTime: false,
     };
+
+    // Main prayer notification
     const id = await schedulePrayerNotification(
       prayer,
       time,
@@ -371,55 +222,54 @@ export async function scheduleAllPrayersForDay(
       options,
       audioSource,
     );
+
     if (id) {
       scheduledIds.push(id);
+
+      console.log(`   ✓ ${prayer.padEnd(8)} → ${time}`);
     }
-    // Store notification details
+
+    // Store prayer details
     const tempDate = new Date(date);
     const [h, m] = time.split(':');
+
     tempDate.setHours(Number(h), Number(m), 0, 0);
-    scheduleAdhan.push({
+
+    storedNotificationsDetails.push({
       prayerName: prayer,
-
-      time: options.preAdhanTime
-        ? `${tempDate.getHours()}:${String(tempDate.getMinutes()).padStart(
-            2,
-            '0',
-          )}`
-        : time,
-
+      time,
       date: tempDate,
     });
 
-    if (isPreadhanTrue) {
-      const id = await schedulePrayerNotification(
+    // Optional pre-Adhan notification
+    if (preNotification) {
+      const preAdhanId = await schedulePrayerNotification(
         prayer,
         time,
         date,
         translatedText,
-        { ...options, preAdhanTime: true },
+        {
+          ...options,
+          preAdhanTime: true,
+        },
         audioSource,
       );
-      if (id) {
-        scheduledIds.push(id);
+
+      if (preAdhanId) {
+        scheduledIds.push(preAdhanId);
+
+        console.log(`   ✓ ${prayer.padEnd(8)} → ${time} (-15m)`);
       }
     }
   }
+
+  // Store notification details
   await AsyncStorage.setItem(
     'prayerNotificationsDetails',
-    JSON.stringify(scheduleAdhan),
+    JSON.stringify(storedNotificationsDetails),
   );
 
-  // ───────────────────────────────────────────────────────────────────────────
-  // Store notification details
-  // ───────────────────────────────────────────────────────────────────────────
-
-  console.log('\n============================================================');
-  console.log('📊 PRAYER SCHEDULING COMPLETE');
-  console.log('============================================================');
-  console.log('✅ Notifications scheduled:', scheduledIds.length);
-  console.log('🆔 IDs:', scheduledIds);
-  console.log('============================================================\n');
+  console.log(`\n✅ Scheduled ${scheduledIds.length} prayer notifications\n`);
 
   return scheduledIds;
 }
@@ -429,8 +279,6 @@ export async function scheduleAllPrayersForDay(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export async function cancelAllPrayerNotifications(): Promise<void> {
-  console.log('\n🧹 CANCELING PRAYER NOTIFICATIONS...');
-
   const scheduled = await Notifications.getAllScheduledNotificationsAsync();
 
   let cancelledCount = 0;
@@ -445,12 +293,10 @@ export async function cancelAllPrayerNotifications(): Promise<void> {
       );
 
       cancelledCount++;
-
-      console.log('🗑️ Cancelled:', notification.identifier);
     }
   }
 
-  console.log(`✅ Cancelled ${cancelledCount} prayer notifications`);
+  console.log(`🧹 Cancelled ${cancelledCount} prayer notifications`);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -460,9 +306,7 @@ export async function cancelAllPrayerNotifications(): Promise<void> {
 export async function cancelNotification(
   notificationId: string,
 ): Promise<void> {
-  console.log('🗑️ Cancelling notification:', notificationId);
-
   await Notifications.cancelScheduledNotificationAsync(notificationId);
 
-  console.log('✅ Notification cancelled:', notificationId);
+  console.log(`🗑 Notification cancelled: ${notificationId}`);
 }

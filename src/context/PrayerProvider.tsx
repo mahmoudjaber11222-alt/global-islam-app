@@ -20,7 +20,6 @@ export function PrayerProvider({ children }: { children: React.ReactNode }) {
   const [preciseKeyDate, setPreciseDateKey] = useState<Date>(new Date());
 
   const shouldFetchPrecise = locationResult && locationResult.ok;
-
   const preciseKey = shouldFetchPrecise
     ? [
         'prayer',
@@ -30,7 +29,9 @@ export function PrayerProvider({ children }: { children: React.ReactNode }) {
       ]
     : null;
 
-  // ✅ Add generics: data type, error type
+  // const preciseKey = ;
+
+  // Add generics: data type, error type
   const { data: dataPrecise } = useSWR<
     AlAdhanResponse | PrayerTimesError, // Data typ
     Error // Error type (SWR error, not API error)
@@ -38,9 +39,18 @@ export function PrayerProvider({ children }: { children: React.ReactNode }) {
     getPrayer({ latitude: Number(lat), longitude: Number(long) }, null, date),
   );
 
-  function onLastPrayerCome() {
+  async function onLastPrayerCome() {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
+    // if (tomorrow.getMonth() !== new Date().getMonth() && locationResult?.ok) {
+    //   await AsyncStorage.removeItem(
+    //     storageKey(
+    //       locationResult.location.coords.latitude,
+    //       locationResult.location.coords.longitude,
+    //       formatDate_toISOString(preciseKeyDate),
+    //     ),
+    //   );
+    // }
     setPreciseDateKey(tomorrow);
   }
 
