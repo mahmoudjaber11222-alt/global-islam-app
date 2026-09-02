@@ -6,7 +6,6 @@ export function getPreviousPrayer(
   let targetPrayer: string = '';
   for (let i = 0; i < prayersList.length; i++) {
     if (prayersList[i] === prayerName) {
-      console.log(prayerName);
       if (i === 0) {
         targetPrayer =
           prayersList[prayersList.length - 1][0].toUpperCase() +
@@ -26,6 +25,17 @@ export function getPreviousPrayer(
   // get translation
 
   targetPrayer = translationObject[targetPrayer];
-  console.log(targetPrayer);
   return targetPrayer;
+}
+export function addOffset(time = '00:00', offset = 0) {
+  if (!offset) return time;
+
+  const [h, m] = time.split(':').map(Number);
+
+  const date = new Date();
+  date.setHours(h, m + offset, 0, 0);
+
+  return `${String(date.getHours()).padStart(2, '0')}:${String(
+    date.getMinutes(),
+  ).padStart(2, '0')}`;
 }

@@ -27,7 +27,7 @@ export default function Index() {
   useEffect(() => {
     async function se() {
       const p = await AsyncStorage.getItem(selectedReciter?.id || '');
-      console.log('paaath:::::::' + p);
+      console.log('Muzian File Path: ' + p);
       setPath(p);
     }
     se();

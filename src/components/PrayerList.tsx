@@ -644,21 +644,31 @@ export const PrayerList: React.FC<PrayerListProps> = ({
           </View>
 
           {/* Prayer Rows */}
-          {mainPrayers.map((prayer) => (
-            <PrayerRow
-              key={prayer}
-              name={prayer}
-              time={
-                prayerData.ok
-                  ? prayerData.data.timings[
-                      prayer as keyof PrayerTimings
-                    ]?.split(' ')[0]
-                  : '00:00'
-              }
-              isNext={nextPrayer === prayer}
-              onPress={() => handleCardPress(prayer)}
-            />
-          ))}
+          {mainPrayers.map((prayer) => {
+            const prayerTime =
+              prayerData.data.timings[prayer as keyof PrayerTimings]?.split(
+                ' ',
+              )[0];
+
+            return (
+              <PrayerRow
+                key={prayer}
+                name={prayer}
+                time={
+                  prayerData.ok
+                    ? prayerTime
+                        ?.split(':')[0]
+                        ?.concat(
+                          ':',
+                          prayerTime?.split(':')[1]?.padStart(2, '0'),
+                        )
+                    : '00:00'
+                }
+                isNext={nextPrayer === prayer}
+                onPress={() => handleCardPress(prayer)}
+              />
+            );
+          })}
 
           {/* Location Footer */}
           <View

@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef } from 'react';
 import { PrayerTimings } from '../app/types/prayer_times';
 import {
-  cancelAllPrayerNotifications,
   initializeNotifications,
   scheduleAllPrayersForDay,
 } from '../service/notificationService';
@@ -16,7 +15,7 @@ interface NotificationData {
   scheduledAt: string;
 }
 
-export function usePrayerNotifications() {
+function usePrayerNotifications() {
   const router = useRouter();
   const notificationListener = useRef<Notifications.Subscription>();
   const responseListener = useRef<Notifications.Subscription>();
@@ -103,9 +102,9 @@ export function usePrayerNotifications() {
   );
 
   // ─── Cancel all prayer notifications ───────────────────────────────────────
-  const cancelPrayers = useCallback(async () => {
-    await cancelAllPrayerNotifications();
-  }, []);
+  // const cancelPrayers = useCallback(async () => {
+  //   await cancelAllPrayerNotifications();
+  // }, []);
 
-  return { schedulePrayers, cancelPrayers };
+  return { schedulePrayers };
 }

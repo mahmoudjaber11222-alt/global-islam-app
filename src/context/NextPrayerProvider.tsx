@@ -1,17 +1,19 @@
 import * as Notifications from 'expo-notifications';
-import { router } from 'expo-router';
-import { createContext, ReactNode, useEffect, useState } from 'react';
+import { createContext, ReactNode, useEffect, useRef, useState } from 'react';
+
 import { shouldShowAthanScreen } from '../app';
 import { requestPermissions } from '../app/Notifications/prayer';
 import { PrayerTimings } from '../app/types/prayer_times';
 import { NextPrayerType } from '../components/NextPrayer';
-import useLanguage from '../hooks/useLanguage';
 import usePrayer from '../hooks/usePrayer';
 import useStaticText from '../hooks/useStaticText';
+
 import {
   cancelAllPrayerNotifications,
   scheduleAllPrayersForDay,
 } from '../service/notificationService';
+
+import { router } from 'expo-router';
 import { useSettings } from './SettingsProvider';
 
 type NextPrayerContextType = {
@@ -28,74 +30,71 @@ type NextPrayerContextType = {
 export const nextPrayerContext = createContext<NextPrayerContextType | null>(
   null,
 );
+
+/**
+ * Removes timezone information from prayer times.
+ *
+ * Example:
+ * "04:32 (+03)" -> "04:32"
+ */
 function safeTimings(times: PrayerTimings): PrayerTimings {
   return Object.fromEntries(
-    Object.entries(times).map(([key, value]) => [key, value.split(' ')[0]]),
+    Object.entries(times).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? value.split(' ')[0] : value,
+    ]),
   ) as PrayerTimings;
 }
-function fromISOtoDate(isoDate: string) {
-  const [day, month, year] = isoDate.split('-');
-  const currentDate = new Date();
-  currentDate.setDate(Number(day));
-  currentDate.setFullYear(Number(year));
-  currentDate.setMonth(Number(month) - 1);
-  return currentDate;
+
+/**
+ * Converts API date format DD-MM-YYYY into a Date object.
+ */
+function fromISOtoDate(dateString: string): Date {
+  const [day, month, year] = dateString.split('-').map(Number);
+
+  if (!day || !month || !year) {
+    throw new Error(`Invalid date format: ${dateString}`);
+  }
+
+  const date = new Date();
+  date.setHours(0, 0, 0, 0);
+  date.setFullYear(year, month - 1, day);
+
+  return date;
 }
-function convertToUnixTime(time: string, date: Date) {
+
+/**
+ * Creates a Date using a prayer time and a specific date.
+ */
+function convertToDate(time: string, date: Date): Date {
   const newDate = new Date(date);
 
-  const [hours, minutes] = time.split(':');
+  const [hours, minutes] = time.split(':').map(Number);
 
-  newDate.setHours(Number(hours));
-  newDate.setMinutes(Number(minutes));
+  if (Number.isNaN(hours) || Number.isNaN(minutes)) {
+    throw new Error(`Invalid prayer time: ${time}`);
+  }
+
+  newDate.setHours(hours);
+  newDate.setMinutes(minutes);
   newDate.setSeconds(0);
+  newDate.setMilliseconds(0);
 
   return newDate;
 }
+
 export function NextPrayerProvider({ children }: { children: ReactNode }) {
-  const { preNotification, selectedReciter } = useSettings();
-  const [athanMeta, setAthanMeta] = useState(null);
-  const { selectedLanguage } = useLanguage();
+  const { preNotification } = useSettings();
+
   const { translatedText } = useStaticText();
-  // const [] = useState([]);
-  // const { schedulePrayers } = usePrayerNotifications();
-  // const [preAdhan, setPreAdhan] = useState(AsyncStorage.getItem('@pre_adhan_notification'));
 
-  async function logNotification() {
-    const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-
-    console.log('All Scheduled Notifications so far are: ', scheduled.length);
-
-    // scheduled.forEach((notification: any) => {
-    //   const trigger = notification.trigger;
-
-    //   console.log({
-    //     id: notification.identifier,
-    //     trigger: new Date(trigger?.value),
-    //   });
-    // });
-  }
-  async function scheduleFullMonthNotifications(
-    timings: PrayerTimings,
-    date: string,
-    preNotification: boolean,
-  ) {
-    const safeTimingsCopy = safeTimings(timings);
-    const fetchedDate = fromISOtoDate(date);
-    await scheduleAllPrayersForDay(
-      safeTimingsCopy,
-      fetchedDate,
-      translatedText,
-      preNotification,
-      'azan.mp3',
-    );
-    logNotification();
-  }
   const { dataPrecise: prayerData, onLastPrayerCome } = usePrayer();
 
+  const fullData = prayerData?.ok ? (prayerData.fullData ?? []) : [];
+
   const [now, setNow] = useState<Date>(new Date());
-  const [showAthanScreen, setShowAthanScreen] = useState(false);
-  const [isAdhanScreenShown, setIsAdhanScreenShown] = useState<boolean>(false);
+
+  const [isAdhanScreenShown, setIsAdhanScreenShown] = useState(false);
 
   const [nextPrayerTimes, setNextPrayerTimes] = useState<NextPrayerType>({
     leftHours: '00',
@@ -104,140 +103,380 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     name: '',
   });
 
+  /**
+   * Prevents multiple notification scheduling operations
+   * from running at the same time.
+   */
+  const isSchedulingRef = useRef(false);
+
+  /**
+   * Stores the configuration that was already scheduled.
+   *
+   * This prevents the provider from scheduling the same
+   * month's notifications repeatedly.
+   */
+  const lastScheduledConfigRef = useRef<string | null>(null);
+
+  /**
+   * Used to prevent an async scheduling operation from
+   * continuing after the effect has been cleaned up.
+   */
+  const scheduleRunIdRef = useRef(0);
+
+  const mainPrayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
+
+  /**
+   * Get the next prayer based on the current time.
+   */
   const getNextPrayer = (timings: PrayerTimings): string => {
     const safe = safeTimings(timings);
 
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
-    const prayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-    for (const prayer of prayers) {
-      const [hours, minutes] = safe[prayer as keyof PrayerTimings]
-        ?.split(':')
-        .map(Number) ?? [0, 0];
+
+    for (const prayer of mainPrayers) {
+      const value = safe[prayer as keyof PrayerTimings];
+
+      if (!value) continue;
+
+      const [hours, minutes] = value.split(':').map(Number);
+
       const prayerMinutes = hours * 60 + minutes;
+
       if (prayerMinutes > currentMinutes) {
         return prayer;
       }
     }
+
+    /**
+     * All prayers have passed.
+     *
+     * The next prayer is tomorrow's Fajr.
+     */
     return 'Fajr';
   };
-  const [showAthan, setShowAthan] = useState<boolean>(false);
 
-  const mainPrayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
-  const nextPrayer: string | null =
-    prayerData && prayerData?.ok
-      ? getNextPrayer(prayerData?.data?.timings)
-      : null;
-
-  const safeTimingsCopy =
-    prayerData && prayerData.ok && safeTimings(prayerData.data.timings);
-  const fetchedDate = prayerData?.ok && prayerData.data.date.gregorian.date;
+  const nextPrayer: string | null = prayerData?.ok
+    ? getNextPrayer(prayerData.data.timings)
+    : null;
   useEffect(() => {
-    async function se() {
-      await requestPermissions();
-      // await schedulePrayerAlarm(
-      //   nextPrayer + '',
-      //   new Date(
-      //     convertToUnixTime(
-      //       safe[nextPrayer as keyof PrayerTimings],
-      //       fromISOtoDate(prayerData.data.date.gregorian.date),
-      //     ),
-      //   ),
-      // );
-    }
-    se();
-  }, [prayerData]);
-
+    console.log('Athan_screen_shown: ', isAdhanScreenShown);
+  }, [isAdhanScreenShown]);
+  /**
+   * Keep current time updated every second.
+   */
   useEffect(() => {
     const timerId = setInterval(() => {
       setNow(new Date());
     }, 1000);
-    return () => clearInterval(timerId);
+
+    return () => {
+      clearInterval(timerId);
+    };
   }, []);
 
+  /**
+   * Request notification permissions once.
+   */
   useEffect(() => {
-    if (!prayerData?.ok || !prayerData?.data) return;
+    let mounted = true;
 
-    const schedule = async () => {
-      await cancelAllPrayerNotifications();
+    async function setupNotifications() {
+      try {
+        await requestPermissions();
 
-      for (const item of prayerData.fullData) {
-        await scheduleFullMonthNotifications(
-          item.timings,
-          item.date.gregorian.date,
-          preNotification,
-        );
+        if (!mounted) return;
+
+        console.log('Notification permissions initialized');
+      } catch (error) {
+        console.error('Failed to request notification permissions:', error);
       }
+    }
+
+    setupNotifications();
+
+    return () => {
+      mounted = false;
     };
+  }, []);
+
+  /**
+   * Debug helper.
+   */
+  async function logNotification() {
+    try {
+      const scheduled = await Notifications.getAllScheduledNotificationsAsync();
+
+      console.log('All scheduled notifications:', scheduled.length);
+    } catch (error) {
+      console.error('Failed to get scheduled notifications:', error);
+    }
+  }
+
+  /**
+   * Schedule notifications for ONE day.
+   */
+  async function scheduleDayNotifications(
+    timings: PrayerTimings,
+    date: string,
+    preAdhan: boolean,
+  ) {
+    try {
+      const safe = safeTimings(timings);
+      const fetchedDate = fromISOtoDate(date);
+
+      await scheduleAllPrayersForDay(
+        safe,
+        fetchedDate,
+        translatedText,
+        preAdhan,
+        'azan.mp3',
+      );
+    } catch (error) {
+      console.error(`Failed to schedule notifications for ${date}:`, error);
+
+      throw error;
+    }
+  }
+
+  /**
+   * Schedule the complete prayer dataset.
+   *
+   * IMPORTANT:
+   * This will only run when the actual dataset/configuration
+   * changes, and it prevents concurrent scheduling operations.
+   */
+  useEffect(() => {
+    if (!fullData.length) {
+      return;
+    }
+
+    const configKey = JSON.stringify({
+      length: fullData.length,
+      firstDate: fullData[0]?.date?.gregorian?.date,
+      lastDate: fullData[fullData.length - 1]?.date?.gregorian?.date,
+      preNotification,
+    });
+
+    /**
+     * Don't schedule the exact same configuration again.
+     */
+    if (lastScheduledConfigRef.current === configKey) {
+      return;
+    }
+
+    /**
+     * Don't allow two scheduling operations
+     * to run simultaneously.
+     */
+    if (isSchedulingRef.current) {
+      console.log('Notification scheduling already running...');
+      return;
+    }
+
+    const runId = ++scheduleRunIdRef.current;
+
+    async function schedule() {
+      isSchedulingRef.current = true;
+
+      try {
+        console.log('Starting prayer notification scheduling...');
+
+        console.log('Days:', fullData.length);
+
+        console.log('Pre-notification:', preNotification);
+
+        /**
+         * Remove previously scheduled prayer
+         * notifications first.
+         */
+        await cancelAllPrayerNotifications();
+
+        /**
+         * Check if this effect has become obsolete.
+         */
+        // if (runId !== scheduleRunIdRef.current) {
+        //   return;
+        // }
+
+        /**
+         * Schedule each day sequentially.
+         */
+        let counter = 0;
+        for (const item of fullData) {
+          counter++;
+          console.log(counter);
+          console.log(
+            'ALL SCHEDULED NOTIFICATIONS ARE: ',
+            (await Notifications.getAllScheduledNotificationsAsync()).length,
+          );
+          // if (runId !== scheduleRunIdRef.current) {
+          //   return;
+          // }
+
+          if (!item?.timings || !item?.date?.gregorian?.date) {
+            console.warn('Skipping invalid prayer data:', item);
+
+            continue;
+          }
+
+          await scheduleDayNotifications(
+            item.timings,
+            item.date.gregorian.date,
+            preNotification,
+          );
+        }
+
+        /**
+         * Mark this configuration as scheduled
+         * only after everything completed successfully.
+         */
+        lastScheduledConfigRef.current = configKey;
+
+        console.log('Prayer notifications scheduled successfully.');
+
+        await logNotification();
+      } catch (error) {
+        console.error('Failed to schedule prayer notifications:', error);
+      } finally {
+        isSchedulingRef.current = false;
+      }
+    }
 
     schedule();
-  }, [prayerData?.ok, preNotification]);
-  const currentMin = now.getMinutes();
-  const currentHours = now.getHours();
 
+    return () => {
+      /**
+       * Invalidate the current scheduling run.
+       */
+      scheduleRunIdRef.current++;
+    };
+  }, [fullData, preNotification, translatedText]);
+
+  /**
+   * Check whether the Athan screen should be shown.
+   */
   useEffect(() => {
     const intervalId = setInterval(async () => {
-      const result: null | object = await shouldShowAthanScreen();
-      if (result && !isAdhanScreenShown) {
-        setIsAdhanScreenShown(true);
-        router.push('/(tabs)/athan');
+      try {
+        const result = await shouldShowAthanScreen();
+        console.log(result);
+        if (result && !isAdhanScreenShown) {
+          router.push('/(tabs)/athan');
+          setIsAdhanScreenShown(true);
+        }
+      } catch (error) {
+        console.error('Failed to check Athan screen:', error);
       }
     }, 1000 * 30);
 
-    return () => clearInterval(intervalId);
-  }, [isAdhanScreenShown]);
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, []);
 
+  /**
+   * Detect when Isha has passed.
+   */
   useEffect(() => {
-    if (prayerData && prayerData.ok) {
+    if (!prayerData?.ok) {
+      return;
+    }
+
+    try {
       const safe = safeTimings(prayerData.data.timings);
-      const lastUnix = convertToUnixTime(
-        safe.Isha,
-        fromISOtoDate(prayerData.data.date.gregorian.date),
-      ).getTime();
-      const nowUnix = now.getTime();
-      if (nowUnix >= lastUnix) {
-        onLastPrayerCome();
-        console.log('Last prayer come');
+
+      if (!safe.Isha) {
+        return;
       }
+
+      const prayerDate = fromISOtoDate(prayerData.data.date.gregorian.date);
+
+      const lastPrayer = convertToDate(safe.Isha, prayerDate).getTime();
+
+      const nowUnix = now.getTime();
+
+      if (nowUnix >= lastPrayer) {
+        onLastPrayerCome();
+
+        console.log('Last prayer has come.');
+      }
+    } catch (error) {
+      console.error('Failed to check last prayer:', error);
     }
   }, [prayerData, now, onLastPrayerCome]);
 
+  /**
+   * Calculate countdown to next prayer.
+   */
   useEffect(() => {
-    if (prayerData?.ok && prayerData && nextPrayer) {
-      const safe = safeTimings(prayerData.data.timings);
-      const nextTime = convertToUnixTime(
-        safe[nextPrayer as keyof PrayerTimings],
-        fromISOtoDate(prayerData.data.date.gregorian.date),
-      );
-      const leftTime: number = nextTime.getTime() - now.getTime();
-      const totalSeconds = Math.floor(leftTime / 1000);
+    if (!prayerData?.ok || !nextPrayer) {
+      return;
+    }
 
-      const leftHours = '' + Math.floor(totalSeconds / 3600);
-      const leftMinutes = '' + Math.floor((totalSeconds % 3600) / 60);
-      const leftSeconds = '' + (totalSeconds % 60);
-      const addPrefix = (time: string): string =>
-        Number(time) < 10 ? '0' + time : time;
+    try {
+      const safe = safeTimings(prayerData.data.timings);
+
+      const prayerTime = safe[nextPrayer as keyof PrayerTimings];
+
+      if (!prayerTime) {
+        return;
+      }
+
+      const prayerDate = fromISOtoDate(prayerData.data.date.gregorian.date);
+
+      let nextTime = convertToDate(prayerTime, prayerDate);
+
+      /**
+       * If all today's prayers have passed,
+       * Fajr belongs to TOMORROW.
+       */
+      if (nextPrayer === 'Fajr' && nextTime.getTime() <= now.getTime()) {
+        nextTime = new Date(nextTime);
+        nextTime.setDate(nextTime.getDate() + 1);
+      }
+
+      const leftTime = nextTime.getTime() - now.getTime();
+
+      const totalSeconds = Math.max(0, Math.floor(leftTime / 1000));
+
+      const leftHours = Math.floor(totalSeconds / 3600);
+
+      const leftMinutes = Math.floor((totalSeconds % 3600) / 60);
+
+      const leftSeconds = totalSeconds % 60;
+
+      const addPrefix = (value: number): string => {
+        return value < 10 ? `0${value}` : `${value}`;
+      };
+
       setNextPrayerTimes({
         leftHours: addPrefix(leftHours),
         leftMinutes: addPrefix(leftMinutes),
         leftSeconds: addPrefix(leftSeconds),
         name: nextPrayer,
       });
+    } catch (error) {
+      console.error('Failed to calculate next prayer:', error);
     }
   }, [nextPrayer, prayerData, now]);
-  const values = {
-    showAthan: showAthanScreen,
+
+  const currentMin = now.getMinutes();
+  const currentHours = now.getHours();
+
+  const values: NextPrayerContextType = {
+    showAthan: isAdhanScreenShown,
     nextPrayer,
     prayerData,
     nextPrayerTimes,
     mainPrayers,
-    showAthanScreen,
-    athanMeta,
-    currentHours: currentHours + '',
-    currentMin: currentMin + '',
+    currentHours: `${currentHours}`,
+    currentMin: `${currentMin}`,
+
     handleAthanScreenShown: (value: boolean): void => {
       setIsAdhanScreenShown(value);
     },
   };
+
   return (
     <nextPrayerContext.Provider value={values}>
       {children}

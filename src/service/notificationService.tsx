@@ -11,7 +11,7 @@ const isDevClient = Constants.executionEnvironment === 'bare';
 // ─────────────────────────────────────────────────────────────────────────────
 // Constants
 // ─────────────────────────────────────────────────────────────────────────────
-
+const today = new Date();
 const PRAYER_CHANNEL_ID = 'prayer-alarm';
 
 const PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
@@ -172,7 +172,7 @@ export async function scheduleAllPrayersForDay(
   const storedNotificationsDetails: any[] = [];
 
   // Remove previous stored details.
-  await AsyncStorage.removeItem('prayerNotificationsDetails');
+  // await AsyncStorage.removeItem('prayerNotificationsDetails');
 
   // ───────────────────────────────────────────────────────────────────────────
   // Android channel
@@ -264,11 +264,12 @@ export async function scheduleAllPrayersForDay(
   }
 
   // Store notification details
-  await AsyncStorage.setItem(
-    'prayerNotificationsDetails',
-    JSON.stringify(storedNotificationsDetails),
-  );
-
+  if (today.getDate() === new Date(date).getDate()) {
+    await AsyncStorage.setItem(
+      'prayerNotificationsDetails',
+      JSON.stringify(storedNotificationsDetails),
+    );
+  }
   console.log(`\n✅ Scheduled ${scheduledIds.length} prayer notifications\n`);
 
   return scheduledIds;

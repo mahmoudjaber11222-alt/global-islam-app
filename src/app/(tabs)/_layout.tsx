@@ -10,7 +10,7 @@ import {
 } from 'react-native-safe-area-context';
 import { getThemeColors } from '../../constants/theme';
 import { useAppTheme } from '../../context/ThemeProvider';
-import { initNotifications, setupPrayerChannel } from '../Notifications/prayer';
+import { setupPrayerChannel } from '../Notifications/prayer';
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
@@ -20,7 +20,7 @@ export default function TabsLayout() {
   const { selectedLanguage } = useLanguage();
   useEffect(() => {
     async function setup() {
-      await initNotifications();
+      // await initNotifications();
       await setupPrayerChannel();
     }
     setup();
