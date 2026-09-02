@@ -276,6 +276,17 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     const runId = ++scheduleRunIdRef.current;
 
     async function schedule() {
+      const isScheduledNotifications = (
+        await Notifications.getAllScheduledNotificationsAsync()
+      ).length;
+      if (isScheduledNotifications) {
+        console.log(
+          'notifications are alredy scheduled | ' +
+            isScheduledNotifications +
+            ' notification',
+        );
+        return;
+      }
       isSchedulingRef.current = true;
 
       try {

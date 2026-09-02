@@ -4,8 +4,7 @@ import Select from '@/src/components/common/Select';
 import useLocation from '@/src/hooks/useLocation';
 import useNextPrayer from '@/src/hooks/useNextPrayer';
 import usePrayer from '@/src/hooks/usePrayer';
-import { router } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 // 1- USER OPENS APP , PRAYERS GET FROM ASYNCCACH
 
 // NO CACHE | FETCHS CACHE USING SWR , STORE DATE IN ASYNC CACH
@@ -42,9 +41,6 @@ export default function Prayers() {
     console.log('handled');
   }
 
-  if (showAthan) {
-    router.push('/(tabs)/athan');
-  }
   return (
     <PrayerList
       city={city}

@@ -21,7 +21,6 @@
       },
       "permissions": [
         "RECEIVE_BOOT_COMPLETED",
-        "SCHEDULE_EXACT_ALARM",
         "VIBRATE",
         "WAKE_LOCK",
         "FOREGROUND_SERVICE",

@@ -60,6 +60,7 @@ function parsePrayerDateTime(dateStr: string, timeStr: string): Date | null {
 export async function shouldShowAthanScreen(): Promise<AthanPayload | null> {
   try {
     const raw = await AsyncStorage.getItem('prayerNotificationsDetails');
+    console.log(raw);
     if (!raw) return null;
 
     const notifications: PrayerNotification[] = JSON.parse(raw);

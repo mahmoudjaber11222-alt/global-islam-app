@@ -4,15 +4,9 @@ import * as Notifications from 'expo-notifications';
 import { Platform } from 'react-native';
 import { PrayerTimings } from '../app/types/prayer_times';
 
-// Check if we're running outside Expo Go.
-// This allows development builds and production APKs.
-const isDevClient = Constants.executionEnvironment === 'bare';
+const isBare = Constants.executionEnvironment === 'bare';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Constants
-// ─────────────────────────────────────────────────────────────────────────────
-const today = new Date();
-const PRAYER_CHANNEL_ID = 'prayer-alarm';
+const PRAYER_CHANNEL_ID = 'prayer-notifications';
 
 const PRAYERS = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'] as const;
 
@@ -48,30 +42,38 @@ export async function initializeNotifications(): Promise<void> {
     throw new Error('Notification permissions not granted');
   }
 
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync(PRAYER_CHANNEL_ID, {
-      name: 'Prayer Alarms',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 500, 200, 500, 200, 500],
-      lightColor: '#c9a96e',
-      sound: 'azan.mp3',
-      enableVibrate: true,
-      enableLights: true,
-      showBadge: false,
-      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-      bypassDnd: true,
-    });
+  await createPrayerChannel();
 
-    if (Platform.Version >= 31) {
-      await Notifications.requestPermissionsAsync({
-        android: {
-          allowAlarm: true,
-        },
-      });
-    }
-  }
+  console.log(`🔔 Notifications initialized | Permission: ${finalStatus}`);
+}
 
-  console.log(`🔔 Notifications initialized  |  Permission: ${finalStatus}`);
+// ─────────────────────────────────────────────────────────────────────────────
+// Android Notification Channel
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function createPrayerChannel(): Promise<void> {
+  if (Platform.OS !== 'android') return;
+
+  await Notifications.setNotificationChannelAsync(PRAYER_CHANNEL_ID, {
+    name: 'Prayer Notifications',
+
+    // Normal/high notification importance
+    importance: Notifications.AndroidImportance.HIGH,
+
+    vibrationPattern: [0, 500, 200, 500],
+    lightColor: '#c9a96e',
+
+    sound: 'azan.mp3',
+
+    enableVibrate: true,
+    enableLights: true,
+
+    showBadge: false,
+
+    lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
+
+    // ❌ No bypassDnd
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -107,8 +109,8 @@ export async function schedulePrayerNotification(
     return '';
   }
 
-  // Expo Go cannot schedule native notifications reliably.
-  if (!isDevClient) {
+  // Skip Expo Go
+  if (!isBare) {
     console.warn(`⚠️ ${prayerName}: skipped (Expo Go)`);
     return;
   }
@@ -121,19 +123,29 @@ export async function schedulePrayerNotification(
     ? translatedText?.prayerApp?.upcoming
     : (translatedText?.athan?.prayerTime ?? 'It is time for prayer');
 
+  const identifier = `prayer-${prayerName}-${
+    triggerDate.toISOString().split('T')[0]
+  }-${triggerDate.getHours()}-${triggerDate.getMinutes()}${
+    options?.preAdhanTime ? '-pre' : ''
+  }`;
+
   const notificationId = await Notifications.scheduleNotificationAsync({
+    identifier,
+
     content: {
       title,
       body,
-      sound,
-      vibrate: vibrate ? [0, 500, 200, 500] : undefined,
-      priority: Notifications.AndroidNotificationPriority.MAX,
 
-      // REMOVED: categoryIdentifier: PRAYER_CHANNEL_ID,
+      sound,
+
+      vibrate: vibrate ? [0, 500, 200, 500] : undefined,
+
+      // Normal notification priority
+      priority: Notifications.AndroidNotificationPriority.HIGH,
 
       data: {
         prayer: prayerName,
-        type: 'prayer-alarm',
+        type: 'prayer-notification',
       },
 
       ...(Platform.OS === 'ios' && {
@@ -143,11 +155,14 @@ export async function schedulePrayerNotification(
       autoDismiss: true,
     },
 
+    // Keep the SAME date/time trigger
     trigger: {
       type: Notifications.SchedulableTriggerInputTypes.DATE,
+
       date: triggerDate,
+
       channelId: Platform.OS === 'android' ? PRAYER_CHANNEL_ID : undefined,
-    } as any,
+    },
   });
 
   return notificationId;
@@ -171,33 +186,7 @@ export async function scheduleAllPrayersForDay(
   const scheduledIds: string[] = [];
   const storedNotificationsDetails: any[] = [];
 
-  // Remove previous stored details.
-  // await AsyncStorage.removeItem('prayerNotificationsDetails');
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Android channel
-  // ───────────────────────────────────────────────────────────────────────────
-
-  if (Platform.OS === 'android') {
-    await Notifications.deleteNotificationChannelAsync(PRAYER_CHANNEL_ID);
-
-    await Notifications.setNotificationChannelAsync(PRAYER_CHANNEL_ID, {
-      name: 'Prayer Alarms',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 500, 200, 500, 200, 500],
-      lightColor: '#c9a96e',
-      sound: 'azan.mp3',
-      enableVibrate: true,
-      enableLights: true,
-      showBadge: false,
-      lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-      bypassDnd: true,
-    });
-  }
-
-  // ───────────────────────────────────────────────────────────────────────────
-  // Schedule prayers
-  // ───────────────────────────────────────────────────────────────────────────
+  const today = new Date();
 
   for (const prayer of PRAYERS) {
     const time = timings[prayer as keyof PrayerTimings]?.split(' ')[0];
@@ -225,12 +214,12 @@ export async function scheduleAllPrayersForDay(
 
     if (id) {
       scheduledIds.push(id);
-
       console.log(`   ✓ ${prayer.padEnd(8)} → ${time}`);
     }
 
     // Store prayer details
     const tempDate = new Date(date);
+
     const [h, m] = time.split(':');
 
     tempDate.setHours(Number(h), Number(m), 0, 0);
@@ -263,13 +252,14 @@ export async function scheduleAllPrayersForDay(
     }
   }
 
-  // Store notification details
+  // Store notification details for current day
   if (today.getDate() === new Date(date).getDate()) {
     await AsyncStorage.setItem(
       'prayerNotificationsDetails',
       JSON.stringify(storedNotificationsDetails),
     );
   }
+
   console.log(`\n✅ Scheduled ${scheduledIds.length} prayer notifications\n`);
 
   return scheduledIds;
@@ -288,7 +278,7 @@ export async function cancelAllPrayerNotifications(): Promise<void> {
     const data = notification.content.data as
       Record<string, unknown> | undefined;
 
-    if (data?.type === 'prayer-alarm') {
+    if (data?.type === 'prayer-notification') {
       await Notifications.cancelScheduledNotificationAsync(
         notification.identifier,
       );

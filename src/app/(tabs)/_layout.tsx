@@ -2,6 +2,7 @@ import useLanguage from '@/src/hooks/useLanguage';
 import useStaticText from '@/src/hooks/useStaticText';
 import Feather from '@expo/vector-icons/Feather';
 
+import { createPrayerChannel } from '@/src/service/notificationService';
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
 import {
@@ -10,7 +11,6 @@ import {
 } from 'react-native-safe-area-context';
 import { getThemeColors } from '../../constants/theme';
 import { useAppTheme } from '../../context/ThemeProvider';
-import { setupPrayerChannel } from '../Notifications/prayer';
 
 export default function TabsLayout() {
   const insets = useSafeAreaInsets();
@@ -21,7 +21,7 @@ export default function TabsLayout() {
   useEffect(() => {
     async function setup() {
       // await initNotifications();
-      await setupPrayerChannel();
+      await createPrayerChannel();
     }
     setup();
   }, []);
