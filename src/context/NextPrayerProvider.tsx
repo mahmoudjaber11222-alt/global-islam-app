@@ -279,14 +279,15 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
       const isScheduledNotifications = (
         await Notifications.getAllScheduledNotificationsAsync()
       ).length;
-      if (isScheduledNotifications) {
-        console.log(
-          'notifications are alredy scheduled | ' +
-            isScheduledNotifications +
-            ' notification',
-        );
-        return;
-      }
+      console.log(isScheduledNotifications, 'here');
+      // if (isScheduledNotifications &&) {
+      //   console.log(
+      //     'notifications are alredy scheduled | ' +
+      //       isScheduledNotifications +
+      //       ' notification',
+      //   );
+      //   return;
+      // }
       isSchedulingRef.current = true;
 
       try {

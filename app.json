@@ -40,12 +40,6 @@
 
     "plugins": [
       [
-        "expo-notifications",
-        {
-          "sounds": ["./assets/sounds/azan.mp3"]
-        }
-      ],
-      [
         "expo-speech-recognition",
         {
           "microphonePermission": "Allow this app to use your microphone.",
