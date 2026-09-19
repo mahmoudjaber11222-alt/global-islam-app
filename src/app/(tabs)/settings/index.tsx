@@ -5,7 +5,7 @@ import useStaticText from '@/src/hooks/useStaticText';
 import { cacheLanguage } from '@/src/utils/cache';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
-import React, { useCallback, useState } from 'react';
+import { useCallback, useContext, useState } from 'react';
 import {
   Animated,
   FlatList,
@@ -20,6 +20,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSettings } from '../../../context/SettingsProvider';
 import { AdhanReciterSelector } from './AdhanReciterSelector';
 import { SettingsRow } from './SettingsRow';
+
+// Adjust these imports according to your project structure
+// import { LANGUAGES } from '../hooks/useLanguage';
+import { nextPrayerContext } from '../../../context/NextPrayerProvider'; // <-- IMPORT CONTEXT HERE
+
+// Assuming these exist in your project
 
 const LANGUAGES = [
   { code: 'en', name: 'English', nameLocal: 'English' },
@@ -89,6 +95,13 @@ export default function Settings() {
     refreshSettings,
   } = useSettings();
 
+  // 1. Consume the prayer context
+  const prayerContext = useContext(nextPrayerContext);
+
+  // 2. Notification states
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+  const [isScheduling, setIsScheduling] = useState(false);
+
   const currentLang = LANGUAGES.find((l) => l.code === selectedLanguage);
 
   useFocusEffect(
@@ -110,6 +123,28 @@ export default function Settings() {
     handleLanguage(code);
     cacheLanguage(code);
     setShowLanguageModal(false);
+  };
+
+  // 3. Toggle handler with loading state
+  const handleToggleNotifications = async (value: boolean) => {
+    setNotificationsEnabled(value);
+    setIsScheduling(true);
+
+    try {
+      if (prayerContext) {
+        if (value) {
+          await prayerContext.schedulePrayerNotifications();
+        } else {
+          await prayerContext.cancelPrayerNotifications();
+        }
+      }
+    } catch (error) {
+      console.error('Failed to toggle notifications:', error);
+      // Revert if it fails
+      setNotificationsEnabled(!value);
+    } finally {
+      setIsScheduling(false);
+    }
   };
 
   return (
@@ -207,7 +242,7 @@ export default function Settings() {
                 </View>
                 {isDownloading ? (
                   <Text style={{ color: c.primary }}>
-                    {translatedText?.ai?.loading?.label}
+                    {translatedText?.ai?.loading?.label || 'Loading...'}
                   </Text>
                 ) : (
                   <TouchableOpacity
@@ -275,9 +310,35 @@ export default function Settings() {
 
         {/* ─── Notifications ─── */}
         <View style={{ marginBottom: 24 }}>
-          <SectionLabel c={c} />
+          <SectionLabel
+            text={translatedText?.settingsApp?.notifications || 'Notifications'}
+            c={c}
+          />
+
+          {/* Master Notification Toggle */}
           <SettingsRow
-            icon="notifications"
+            icon={notificationsEnabled ? 'notifications' : 'notifications-off'}
+            iconColor="#3b82f6"
+            title={
+              translatedText?.settingsApp?.notifications ||
+              'Enable Notifications'
+            }
+            subtitle={
+              isScheduling
+                ? translatedText?.ai?.loading?.label || 'Updating...'
+                : notificationsEnabled
+                  ? 'Prayers are scheduled'
+                  : 'Prayers are muted'
+            }
+            isSwitch
+            switchValue={notificationsEnabled}
+            onSwitchChange={handleToggleNotifications}
+            disabled={isScheduling}
+            c={c}
+          />
+
+          <SettingsRow
+            icon="time"
             iconColor="#3b82f6"
             title={translatedText?.settingsApp?.preNot}
             subtitle={translatedText?.settingsApp?.preNotDet}
@@ -387,11 +448,7 @@ export default function Settings() {
                       {item.nameLocal}
                     </Text>
                     <Text
-                      style={{
-                        color: c.tertiary,
-                        fontSize: 13,
-                        marginTop: 2,
-                      }}
+                      style={{ color: c.tertiary, fontSize: 13, marginTop: 2 }}
                     >
                       {item.name}
                     </Text>

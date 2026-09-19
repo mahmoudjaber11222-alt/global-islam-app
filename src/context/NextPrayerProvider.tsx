@@ -25,6 +25,9 @@ type NextPrayerContextType = {
   currentHours: string;
   currentMin: string;
   handleAthanScreenShown: (value: boolean) => void;
+  // Added functions for manual notification control
+  schedulePrayerNotifications: () => Promise<void>;
+  cancelPrayerNotifications: () => Promise<void>;
 };
 
 export const nextPrayerContext = createContext<NextPrayerContextType | null>(
@@ -85,17 +88,13 @@ function convertToDate(time: string, date: Date): Date {
 
 export function NextPrayerProvider({ children }: { children: ReactNode }) {
   const { preNotification } = useSettings();
-
   const { translatedText } = useStaticText();
-
   const { dataPrecise: prayerData, onLastPrayerCome } = usePrayer();
 
   const fullData = prayerData?.ok ? (prayerData.fullData ?? []) : [];
 
   const [now, setNow] = useState<Date>(new Date());
-
   const [isAdhanScreenShown, setIsAdhanScreenShown] = useState(false);
-
   const [nextPrayerTimes, setNextPrayerTimes] = useState<NextPrayerType>({
     leftHours: '00',
     leftSeconds: '00',
@@ -109,37 +108,17 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
    */
   const isSchedulingRef = useRef(false);
 
-  /**
-   * Stores the configuration that was already scheduled.
-   *
-   * This prevents the provider from scheduling the same
-   * month's notifications repeatedly.
-   */
-  const lastScheduledConfigRef = useRef<string | null>(null);
-
-  /**
-   * Used to prevent an async scheduling operation from
-   * continuing after the effect has been cleaned up.
-   */
-  const scheduleRunIdRef = useRef(0);
-
   const mainPrayers = ['Fajr', 'Dhuhr', 'Asr', 'Maghrib', 'Isha'];
 
-  /**
-   * Get the next prayer based on the current time.
-   */
   const getNextPrayer = (timings: PrayerTimings): string => {
     const safe = safeTimings(timings);
-
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
 
     for (const prayer of mainPrayers) {
       const value = safe[prayer as keyof PrayerTimings];
-
       if (!value) continue;
 
       const [hours, minutes] = value.split(':').map(Number);
-
       const prayerMinutes = hours * 60 + minutes;
 
       if (prayerMinutes > currentMinutes) {
@@ -147,74 +126,50 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
       }
     }
 
-    /**
-     * All prayers have passed.
-     *
-     * The next prayer is tomorrow's Fajr.
-     */
     return 'Fajr';
   };
 
   const nextPrayer: string | null = prayerData?.ok
     ? getNextPrayer(prayerData.data.timings)
     : null;
+
   useEffect(() => {
     console.log('Athan_screen_shown: ', isAdhanScreenShown);
   }, [isAdhanScreenShown]);
-  /**
-   * Keep current time updated every second.
-   */
+
   useEffect(() => {
     const timerId = setInterval(() => {
       setNow(new Date());
     }, 1000);
-
-    return () => {
-      clearInterval(timerId);
-    };
+    return () => clearInterval(timerId);
   }, []);
 
-  /**
-   * Request notification permissions once.
-   */
   useEffect(() => {
     let mounted = true;
-
     async function setupNotifications() {
       try {
         await requestPermissions();
-
         if (!mounted) return;
-
         console.log('Notification permissions initialized');
       } catch (error) {
         console.error('Failed to request notification permissions:', error);
       }
     }
-
     setupNotifications();
-
     return () => {
       mounted = false;
     };
   }, []);
 
-  /**
-   * Debug helper.
-   */
   async function logNotification() {
     try {
       const scheduled = await Notifications.getAllScheduledNotificationsAsync();
-
       console.log('All scheduled notifications:', scheduled.length);
     } catch (error) {
       console.error('Failed to get scheduled notifications:', error);
     }
   }
 
-  /**
-   * Schedule notifications for ONE day.
-   */
   async function scheduleDayNotifications(
     timings: PrayerTimings,
     date: string,
@@ -233,145 +188,78 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
       );
     } catch (error) {
       console.error(`Failed to schedule notifications for ${date}:`, error);
-
       throw error;
     }
   }
 
   /**
-   * Schedule the complete prayer dataset.
-   *
-   * IMPORTANT:
-   * This will only run when the actual dataset/configuration
-   * changes, and it prevents concurrent scheduling operations.
+   * MANUALLY schedule the complete prayer dataset.
+   * Call this when unmuting notifications.
    */
-  useEffect(() => {
+  const schedulePrayerNotifications = async () => {
     if (!fullData.length) {
+      console.warn('No prayer data available to schedule.');
       return;
     }
 
-    const configKey = JSON.stringify({
-      length: fullData.length,
-      firstDate: fullData[0]?.date?.gregorian?.date,
-      lastDate: fullData[fullData.length - 1]?.date?.gregorian?.date,
-      preNotification,
-    });
-
-    /**
-     * Don't schedule the exact same configuration again.
-     */
-    if (lastScheduledConfigRef.current === configKey) {
-      return;
-    }
-
-    /**
-     * Don't allow two scheduling operations
-     * to run simultaneously.
-     */
     if (isSchedulingRef.current) {
       console.log('Notification scheduling already running...');
       return;
     }
 
-    const runId = ++scheduleRunIdRef.current;
+    isSchedulingRef.current = true;
 
-    async function schedule() {
-      const isScheduledNotifications = (
-        await Notifications.getAllScheduledNotificationsAsync()
-      ).length;
-      console.log(isScheduledNotifications, 'here');
-      // if (isScheduledNotifications &&) {
-      //   console.log(
-      //     'notifications are alredy scheduled | ' +
-      //       isScheduledNotifications +
-      //       ' notification',
-      //   );
-      //   return;
-      // }
-      isSchedulingRef.current = true;
+    try {
+      console.log('Starting manual prayer notification scheduling...');
+      console.log('Days:', fullData.length);
+      console.log('Pre-notification:', preNotification);
 
-      try {
-        console.log('Starting prayer notification scheduling...');
+      // Remove previously scheduled prayer notifications first
+      await cancelAllPrayerNotifications();
 
-        console.log('Days:', fullData.length);
-
-        console.log('Pre-notification:', preNotification);
-
-        /**
-         * Remove previously scheduled prayer
-         * notifications first.
-         */
-        await cancelAllPrayerNotifications();
-
-        /**
-         * Check if this effect has become obsolete.
-         */
-        // if (runId !== scheduleRunIdRef.current) {
-        //   return;
-        // }
-
-        /**
-         * Schedule each day sequentially.
-         */
-        let counter = 0;
-        for (const item of fullData) {
-          counter++;
-          console.log(counter);
-          console.log(
-            'ALL SCHEDULED NOTIFICATIONS ARE: ',
-            (await Notifications.getAllScheduledNotificationsAsync()).length,
-          );
-          // if (runId !== scheduleRunIdRef.current) {
-          //   return;
-          // }
-
-          if (!item?.timings || !item?.date?.gregorian?.date) {
-            console.warn('Skipping invalid prayer data:', item);
-
-            continue;
-          }
-
-          await scheduleDayNotifications(
-            item.timings,
-            item.date.gregorian.date,
-            preNotification,
-          );
+      let counter = 0;
+      for (const item of fullData) {
+        counter++;
+        if (!item?.timings || !item?.date?.gregorian?.date) {
+          console.warn('Skipping invalid prayer data:', item);
+          continue;
         }
 
-        /**
-         * Mark this configuration as scheduled
-         * only after everything completed successfully.
-         */
-        lastScheduledConfigRef.current = configKey;
-
-        console.log('Prayer notifications scheduled successfully.');
-
-        await logNotification();
-      } catch (error) {
-        console.error('Failed to schedule prayer notifications:', error);
-      } finally {
-        isSchedulingRef.current = false;
+        await scheduleDayNotifications(
+          item.timings,
+          item.date.gregorian.date,
+          preNotification,
+        );
       }
+
+      console.log('Prayer notifications scheduled successfully.');
+      await logNotification();
+    } catch (error) {
+      console.error('Failed to schedule prayer notifications:', error);
+    } finally {
+      isSchedulingRef.current = false;
     }
-
-    schedule();
-
-    return () => {
-      /**
-       * Invalidate the current scheduling run.
-       */
-      scheduleRunIdRef.current++;
-    };
-  }, [fullData, preNotification, translatedText]);
+  };
 
   /**
-   * Check whether the Athan screen should be shown.
+   * MANUALLY cancel all notifications.
+   * Call this when muting notifications.
    */
+  const cancelPrayerNotifications = async () => {
+    try {
+      console.log('Canceling all prayer notifications...');
+      await cancelAllPrayerNotifications();
+      console.log('All prayer notifications muted successfully.');
+      await logNotification();
+    } catch (error) {
+      console.error('Failed to cancel notifications:', error);
+    }
+  };
+
   useEffect(() => {
     const intervalId = setInterval(async () => {
       try {
         const result = await shouldShowAthanScreen();
-        console.log(result);
         if (result && !isAdhanScreenShown) {
           router.push('/(tabs)/athan');
           setIsAdhanScreenShown(true);
@@ -381,35 +269,22 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
       }
     }, 1000 * 30);
 
-    return () => {
-      clearInterval(intervalId);
-    };
+    return () => clearInterval(intervalId);
   }, []);
 
-  /**
-   * Detect when Isha has passed.
-   */
   useEffect(() => {
-    if (!prayerData?.ok) {
-      return;
-    }
+    if (!prayerData?.ok) return;
 
     try {
       const safe = safeTimings(prayerData.data.timings);
-
-      if (!safe.Isha) {
-        return;
-      }
+      if (!safe.Isha) return;
 
       const prayerDate = fromISOtoDate(prayerData.data.date.gregorian.date);
-
       const lastPrayer = convertToDate(safe.Isha, prayerDate).getTime();
-
       const nowUnix = now.getTime();
 
       if (nowUnix >= lastPrayer) {
         onLastPrayerCome();
-
         console.log('Last prayer has come.');
       }
     } catch (error) {
@@ -417,44 +292,27 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     }
   }, [prayerData, now, onLastPrayerCome]);
 
-  /**
-   * Calculate countdown to next prayer.
-   */
   useEffect(() => {
-    if (!prayerData?.ok || !nextPrayer) {
-      return;
-    }
+    if (!prayerData?.ok || !nextPrayer) return;
 
     try {
       const safe = safeTimings(prayerData.data.timings);
-
       const prayerTime = safe[nextPrayer as keyof PrayerTimings];
 
-      if (!prayerTime) {
-        return;
-      }
+      if (!prayerTime) return;
 
       const prayerDate = fromISOtoDate(prayerData.data.date.gregorian.date);
-
       let nextTime = convertToDate(prayerTime, prayerDate);
 
-      /**
-       * If all today's prayers have passed,
-       * Fajr belongs to TOMORROW.
-       */
       if (nextPrayer === 'Fajr' && nextTime.getTime() <= now.getTime()) {
         nextTime = new Date(nextTime);
         nextTime.setDate(nextTime.getDate() + 1);
       }
 
       const leftTime = nextTime.getTime() - now.getTime();
-
       const totalSeconds = Math.max(0, Math.floor(leftTime / 1000));
-
       const leftHours = Math.floor(totalSeconds / 3600);
-
       const leftMinutes = Math.floor((totalSeconds % 3600) / 60);
-
       const leftSeconds = totalSeconds % 60;
 
       const addPrefix = (value: number): string => {
@@ -483,10 +341,11 @@ export function NextPrayerProvider({ children }: { children: ReactNode }) {
     mainPrayers,
     currentHours: `${currentHours}`,
     currentMin: `${currentMin}`,
-
     handleAthanScreenShown: (value: boolean): void => {
       setIsAdhanScreenShown(value);
     },
+    schedulePrayerNotifications,
+    cancelPrayerNotifications,
   };
 
   return (
