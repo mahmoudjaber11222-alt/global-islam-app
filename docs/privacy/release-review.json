@@ -4,7 +4,7 @@
   "policy": {
     "providerDataHandlingEvidence": {
       "complete": false,
-      "evidence": "Production still Gemini; configured tier, operator, processing settings and retention unknown. Proposed Cloudflare is not deployed. Under18 provider/guardian issue no longer applies to intended adults, conditional on effective restriction. Factual publication gate remains."
+      "evidence": "Owner confirms individual operation (not a company) and personal report-review responsibility. Production still Gemini; provider tier/settings, DB host/region, host logs/backups and deletion remain unverified. Proposed Cloudflare not deployed."
     },
     "retentionDeletionAndTraining": {
       "complete": false,
@@ -12,7 +12,7 @@
     },
     "accuratePolicyAndDataSafety": {
       "complete": false,
-      "evidence": "BLOCKED: bilingual drafts retained pending operator/contracts/retention/security/final SDK evidence."
+      "evidence": "BLOCKED: owner-confirmed individual operator and personal reviewer are reflected in EN/AR drafts; production provider tier/contracts, storage/log/backup retention, deletion and final SDK evidence remain unresolved."
     },
     "adultAudienceAndAgeHandling": {
       "complete": false,
@@ -22,11 +22,11 @@
   "app": {
     "backendEligibilityAndConsent": {
       "complete": false,
-      "evidence": "Adult-only opaque grants prepared with eligible_18_plus, assurance_verified and new policy version/table. No guardian issuer is needed for intended adult users; no approved adult assurance issuer exists. Production remains old revision and activation flags false."
+      "evidence": "No general Google Play/Cloudflare/Mistral requirement for third-party adult identity verification identified for this educational app. Keep18+ gate, Restrict Minor Access and secure server-issued grants; choose proportionate access procedure and assess applicable regions. Issuer integration remains engineering work, not a mandated external verification vendor. No activation."
     },
     "aiModerationAndInAppReporting": {
       "complete": false,
-      "evidence": "Cloudflare Mistral candidate, mandatory evaluated safety hooks and encrypted transactional report endpoint remain local. Adult multilingual moderation, production PostgreSQL/triage/retention and live receiver remain unverified."
+      "evidence": "57 backend tests and isolated PostgreSQL17 synthetic staging pass encrypted receipt/admin queue/review/resolution and guarded fixture cleanup. Live Free-plan guided JSON contract corrected locally, but harmless EN/AR moderation probes are falsely rejected. Complete multilingual safety/source evaluation and production receiver remain blocked; no deployment."
     },
     "ageHandlingAndContentReview": {
       "complete": false,
