@@ -1,0 +1,48 @@
+{
+  "intendedMinimumAge": 14,
+  "note": "Evidence record, not certification. Local age14 self-declaration exists; native startup/consent unverified. Scoped publication authorized after gates pass; incomplete fields still block it.",
+  "policy": {
+    "providerDataHandlingEvidence": {
+      "complete": false,
+      "evidence": "Production source uses Gemini, with provider tier/training, operator and host data handling still unverified. This is a factual publication gate, not a requirement to deploy Cloudflare first. Cloudflare teen eligibility is UNVERIFIED and belongs to the separate app/backend release gate."
+    },
+    "retentionDeletionAndTraining": {
+      "complete": false,
+      "evidence": "BLOCKED: production AI/Hadith raw logging confirmed, host/provider tier/training/retention/deletion unknown. Candidate removes online raw logs and encrypts reports, with mandatory owner-selected retention and purge helper; not deployed and backups/operations unverified."
+    },
+    "teenPrivacyAndFamiliesApplicability": {
+      "complete": false,
+      "evidence": "PARTIAL: confirmed14+, local eligibility flag only; regional consent/content duties unresolved."
+    },
+    "accuratePolicyAndDataSafety": {
+      "complete": false,
+      "evidence": "BLOCKED: bilingual drafts retained pending operator/contracts/retention/security/final SDK evidence."
+    }
+  },
+  "app": {
+    "backendEligibilityAndConsent": {
+      "complete": false,
+      "evidence": "PARTIAL local: opaque DB-backed grants plus mobile pre-processing authorization, raw-language body and rejected-grant cleanup tested. Actual assurance/guardian issuer is absent. Cloudflare teen eligibility explicitly UNVERIFIED; see CURRENT-STATUS.md. Production still old revision and mobile deployment flags false."
+    },
+    "aiModerationAndInAppReporting": {
+      "complete": false,
+      "evidence": "PARTIAL local: Cloudflare Mistral adapter, mandatory evaluated safety hooks, encrypted reporting and 47 backend offline tests plus serializer/ASGI contract PASS. Two adult synthetic EN/AR connectivity probes HTTP200; no quality, teen eligibility, PostgreSQL, triage or deployment verification. Receiver blank/false."
+    },
+    "ageHandlingAndContentReview": {
+      "complete": false,
+      "evidence": "PARTIAL: boundary/storage/render/provider-placement tests pass. Identity/native startup/consent/content review unresolved."
+    },
+    "transportSecurity": {
+      "complete": false,
+      "evidence": "BLOCKED: mobile Tafsir remains HTTP. Offline pinned-corpus endpoint prepared/tested with synthetic data only; all10 licensed complete source corpora missing, no frontend switch. Candidate PG TLS now verifies CA/hostname; production not changed."
+    },
+    "releaseSdkAndPermissionAudit": {
+      "complete": false,
+      "evidence": "PARTIAL: source permission exclusions and FCM/Analytics opt-outs pass tests and actual offline Expo introspection. Historical APK hash recorded; no fresh artifact/runtime collection audit."
+    },
+    "publicWebsiteAndAndroidVerification": {
+      "complete": false,
+      "evidence": "BLOCKED publication/device: user made existing repo PUBLIC; authenticated and anonymous API verify it, free public GitHub Pages path available. No Pages site/deployment (has_pages=false/404), no policy URL. Factual policy gates fail; Android/runtime/live verification missing. Config remains blank/false."
+    }
+  }
+}
