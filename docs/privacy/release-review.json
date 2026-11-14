@@ -1,32 +1,32 @@
 {
-  "intendedMinimumAge": 14,
-  "note": "Evidence record, not certification. Local age14 self-declaration exists; native startup/consent unverified. Scoped publication authorized after gates pass; incomplete fields still block it.",
+  "intendedMinimumAge": 18,
+  "note": "Final owner decision: adults18+ only, superseding all younger audiences. Evidence record, not certification. Local self-declaration does not prove adulthood. Production/privacy/security gates remain active.",
   "policy": {
     "providerDataHandlingEvidence": {
       "complete": false,
-      "evidence": "Production source uses Gemini, with provider tier/training, operator and host data handling still unverified. This is a factual publication gate, not a requirement to deploy Cloudflare first. Cloudflare teen eligibility is UNVERIFIED and belongs to the separate app/backend release gate."
+      "evidence": "Production still Gemini; configured tier, operator, processing settings and retention unknown. Proposed Cloudflare is not deployed. Under18 provider/guardian issue no longer applies to intended adults, conditional on effective restriction. Factual publication gate remains."
     },
     "retentionDeletionAndTraining": {
       "complete": false,
       "evidence": "BLOCKED: production AI/Hadith raw logging confirmed, host/provider tier/training/retention/deletion unknown. Candidate removes online raw logs and encrypts reports, with mandatory owner-selected retention and purge helper; not deployed and backups/operations unverified."
     },
-    "teenPrivacyAndFamiliesApplicability": {
-      "complete": false,
-      "evidence": "PARTIAL: confirmed14+, local eligibility flag only; regional consent/content duties unresolved."
-    },
     "accuratePolicyAndDataSafety": {
       "complete": false,
       "evidence": "BLOCKED: bilingual drafts retained pending operator/contracts/retention/security/final SDK evidence."
+    },
+    "adultAudienceAndAgeHandling": {
+      "complete": false,
+      "evidence": "Adults18+ owner-confirmed. Versioned local decision denies declared minors and invalidates former approvals without deletion. Reliable server assurance and coordinated production activation are not established."
     }
   },
   "app": {
     "backendEligibilityAndConsent": {
       "complete": false,
-      "evidence": "PARTIAL local: opaque DB-backed grants plus mobile pre-processing authorization, raw-language body and rejected-grant cleanup tested. Actual assurance/guardian issuer is absent. Cloudflare teen eligibility explicitly UNVERIFIED; see CURRENT-STATUS.md. Production still old revision and mobile deployment flags false."
+      "evidence": "Adult-only opaque grants prepared with eligible_18_plus, assurance_verified and new policy version/table. No guardian issuer is needed for intended adult users; no approved adult assurance issuer exists. Production remains old revision and activation flags false."
     },
     "aiModerationAndInAppReporting": {
       "complete": false,
-      "evidence": "PARTIAL local: Cloudflare Mistral adapter, mandatory evaluated safety hooks, encrypted reporting and 47 backend offline tests plus serializer/ASGI contract PASS. Two adult synthetic EN/AR connectivity probes HTTP200; no quality, teen eligibility, PostgreSQL, triage or deployment verification. Receiver blank/false."
+      "evidence": "Cloudflare Mistral candidate, mandatory evaluated safety hooks and encrypted transactional report endpoint remain local. Adult multilingual moderation, production PostgreSQL/triage/retention and live receiver remain unverified."
     },
     "ageHandlingAndContentReview": {
       "complete": false,

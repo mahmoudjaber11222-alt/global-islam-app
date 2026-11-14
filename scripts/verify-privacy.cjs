@@ -16,7 +16,7 @@ for (const file of pages) {
   assert.match(html, /name="viewport"/);
   assert(html.includes('Mahmoud_Jaber.craft'), 'Missing confirmed developer');
   assert(html.includes('mailto:craftedbymahmoud@gmail.com'), 'Missing confirmed public contact');
-  assert(html.includes(file === 'ar.html' ? '١٤ عاماً فأكثر' : 'aged 14 and older'), 'Missing current intended minimum age');
+  assert(html.includes(file === 'ar.html' ? '١٨ عاماً فأكثر' : 'aged 18 and older'), 'Missing current intended minimum age');
   assert.match(html, file === 'ar.html' ? /<html lang="ar" dir="rtl">/ : /<html lang="en" dir="ltr">/);
   assert.equal((html.match(/<h1>/g) || []).length, 1);
   assert.equal((html.match(/<section id=/g) || []).length, 14);
@@ -50,9 +50,9 @@ for (const file of publicFiles) {
 const release = process.argv.includes('--release');
 function requireReview(group) {
   const review = JSON.parse(fs.readFileSync(path.resolve(__dirname, '../docs/privacy/release-review.json'), 'utf8'));
-  assert.equal(review.intendedMinimumAge, 14, 'Reassess declarations when intended age changes');
+  assert.equal(review.intendedMinimumAge, 18, 'Reassess declarations when intended age changes');
   const required = group === 'policy'
-    ? ['providerDataHandlingEvidence', 'retentionDeletionAndTraining', 'teenPrivacyAndFamiliesApplicability', 'accuratePolicyAndDataSafety']
+    ? ['providerDataHandlingEvidence', 'retentionDeletionAndTraining', 'adultAudienceAndAgeHandling', 'accuratePolicyAndDataSafety']
     : ['aiModerationAndInAppReporting', 'ageHandlingAndContentReview', 'backendEligibilityAndConsent', 'transportSecurity', 'releaseSdkAndPermissionAudit', 'publicWebsiteAndAndroidVerification'];
   for (const key of required) {
     const item = review[group]?.[key];
