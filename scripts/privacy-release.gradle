@@ -1,0 +1,14 @@
+// Fail closed before any distributable release task, including direct Gradle builds.
+gradle.taskGraph.whenReady { graph ->
+    def releaseTasks = ['bundleRelease', 'assembleRelease', 'installRelease', 'packageReleaseBundle']
+    if (graph.allTasks.any { it.project == project && releaseTasks.contains(it.name) }) {
+        def check = providers.exec {
+            workingDir rootProject.projectDir.parentFile
+            commandLine 'node', 'scripts/verify-privacy.cjs', '--release', '--app-release'
+            ignoreExitValue true
+        }.result.get()
+        if (check.exitValue != 0) {
+            throw new GradleException('Global Islam release blocked: privacy/backend verification is incomplete.')
+        }
+    }
+}

@@ -4,11 +4,11 @@
   "policy": {
     "providerDataHandlingEvidence": {
       "complete": false,
-      "evidence": "Owner confirms individual operation (not a company) and personal report-review responsibility. Production still Gemini; provider tier/settings, DB host/region, host logs/backups and deletion remain unverified. Proposed Cloudflare not deployed."
+      "evidence": "2026-11-16: individual operator/reviewer owner-confirmed. Actual production uses DB_URL; replaced Neon password connects with client TLS; old credential rejected; live DB-backed /learn200. Production revision stillc053c99 with legacy Gemini/raw request logging. Neon provider/us-east-1 hostname indicator confirmed; project/host log and backup controls and current Gemini tier/data-use evidence incomplete."
     },
     "retentionDeletionAndTraining": {
       "complete": false,
-      "evidence": "BLOCKED: production AI/Hadith raw logging confirmed, host/provider tier/training/retention/deletion unknown. Candidate removes online raw logs and encrypts reports, with mandatory owner-selected retention and purge helper; not deployed and backups/operations unverified."
+      "evidence": "Owner APPROVED 30-day logs/backups, 90 days after report resolution, unresolved review30/max180, privacy requests30 or sooner by law, limited documented legal exceptions and restored-deletion replay. Implemented/tested locally; current production cleanup and host backup/log controls remain unverified. No production deletion."
     },
     "accuratePolicyAndDataSafety": {
       "complete": false,
@@ -16,21 +16,21 @@
     },
     "adultAudienceAndAgeHandling": {
       "complete": false,
-      "evidence": "Adults18+ owner-confirmed. Versioned local decision denies declared minors and invalidates former approvals without deletion. Reliable server assurance and coordinated production activation are not established."
+      "evidence": "Adults18+ final decision. Current local gate denies declared minors including after restart and rejects prior14+ decisions. Five-minute hashed server grants and declaration issuer pass real-PG staging. Self-declaration is not proof of adulthood. No blanket third-party ID mandate established; coordinated production adult enforcement remains pending."
     }
   },
   "app": {
     "backendEligibilityAndConsent": {
       "complete": false,
-      "evidence": "No general Google Play/Cloudflare/Mistral requirement for third-party adult identity verification identified for this educational app. Keep18+ gate, Restrict Minor Access and secure server-issued grants; choose proportionate access procedure and assess applicable regions. Issuer integration remains engineering work, not a mandated external verification vendor. No activation."
+      "evidence": "Minimal adult self-declaration issuer implemented: opaque five-minute server grants, hashed persistence, current policy, expiry/revocation and issuer method validation; no age/DOB/identity evidence collected. Client eligible flag cannot authorize protected operations. Self-declaration cannot prove adulthood. Frontend acquisition tested; deployment remains unverified."
     },
     "aiModerationAndInAppReporting": {
       "complete": false,
-      "evidence": "57 backend tests and isolated PostgreSQL17 synthetic staging pass encrypted receipt/admin queue/review/resolution and guarded fixture cleanup. Live Free-plan guided JSON contract corrected locally, but harmless EN/AR moderation probes are falsely rejected. Complete multilingual safety/source evaluation and production receiver remain blocked; no deployment."
+      "evidence": "Live synthetic EN/AR moderation smoke evaluation8/8 passes after structured responses and translated safety cross-check. This is not exhaustive safety certification. Encrypted report persistence, admin audit/review/resolve/lawful holds, journaled deletion and actual PG restore replay tested locally. Production receiver and device integration remain inactive/unverified."
     },
     "ageHandlingAndContentReview": {
       "complete": false,
-      "evidence": "PARTIAL: boundary/storage/render/provider-placement tests pass. Identity/native startup/consent/content review unresolved."
+      "evidence": "Local18+ boundary, persistence, render and provider-placement tests pass. No universal identity-verification requirement established. Final native startup, content and production declaration/grant verification remain incomplete."
     },
     "transportSecurity": {
       "complete": false,
@@ -38,7 +38,7 @@
     },
     "releaseSdkAndPermissionAudit": {
       "complete": false,
-      "evidence": "PARTIAL: source permission exclusions and FCM/Analytics opt-outs pass tests and actual offline Expo introspection. Historical APK hash recorded; no fresh artifact/runtime collection audit."
+      "evidence": "Source exclusions, FCM/Analytics defaults, Expo introspection and plugin idempotency pass. Direct Gradle release guard added. Fresh manifest build fails on Windows Gradle immutable-workspace moves even with isolated cache/no-watch-fs; no final binary/runtime collection claim."
     },
     "publicWebsiteAndAndroidVerification": {
       "complete": false,

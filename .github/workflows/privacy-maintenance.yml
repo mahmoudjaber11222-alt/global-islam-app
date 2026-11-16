@@ -1,0 +1,28 @@
+name: Privacy retention maintenance
+
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: privacy-retention-maintenance
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    if: github.repository == 'mahmoudjaber11222-alt/global-islam-app' && github.ref == 'refs/heads/main' && vars.PRIVACY_MAINTENANCE_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - name: Invoke scoped reviewed retention job
+        env:
+          PRIVACY_MAINTENANCE_ENABLED: ${{ vars.PRIVACY_MAINTENANCE_ENABLED }}
+          PRIVACY_MAINTENANCE_KEY: ${{ secrets.PRIVACY_MAINTENANCE_KEY }}
+        run: python3 scripts/run-privacy-maintenance.py
