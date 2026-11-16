@@ -7,7 +7,7 @@ Developer Mahmoud_Jaber.craft; privacy craftedbymahmoud@gmail.com.
 | --- | --- | --- |
 | Target Audience | **18 and over only**; no younger bands | Final owner decision; store listing and actual service must match. |
 | Restrict Minor Access | Enable on Target Audience screen | Google's guidance: blocks identified minors from finding/downloading/purchasing; existing installs may still work. New local gate and server enforcement remain necessary. |
-| Privacy Policy | Use verified Pages URL recorded after deployment | Do not paste a predicted github.io URL; finalize/publish/verify EN/AR first. |
+| Privacy Policy | https://mahmoudjaber11222-alt.github.io/global-islam-app/ | Verified anonymous HTTPS200, publishing revisiona4a1884; Arabic siblingar.html. |
 | Content rating | Complete actual IARC questionnaire | Adult-only targeting does not mean inherently mature content. Review AI, religious material, news, videos/links honestly. No fabricated rating. |
 | Contains ads | No source ad integration found; final artifact check pending | Do not promise external news/video sites are ad-free. |
 | App Access | Current app account-free; explain18+ gate/manual location | For protected backend, give reviewers the actual adult-declaration/access flow, not fake login or review bypass. |

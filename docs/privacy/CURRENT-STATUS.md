@@ -51,7 +51,7 @@ report-contract testsPASS. Receiver config points to actual verified report endp
 Protected authorization required; deploymentVerifiedfalse while inference/recovery
 blocked. Unrelated pre-existing UI refactor preserved. No Google Play rollout.
 Policy publication review covers truthful current limitations; Android safeguards
-remain blocked. Record URLs only after actual PagesHTTPS verification.
+remain blocked. Actual PagesHTTPS verification is recorded below.
 
 Remaining actions: restore authorized HF HTTPS egress to api.cloudflare.com:443,
 rerun live EN/AR grounding/moderation and checkpointed maintenance, then enable and
@@ -65,3 +65,18 @@ encryption. Never revert to exposed/plaintext legacy main. No database restore o
 historical deletion as code rollback. Actual restore must remain isolated through
 latest checkpoint replay and additive schema/hash-format validation. No further
 admin reset or destructive migration approval is pending.
+
+## Verified public website
+
+Published revision a4a18842b197f2dd1d16c22f62e351cfa880fa66 through existing GitHub Pages workflow.
+English: https://mahmoudjaber11222-alt.github.io/global-islam-app/
+Arabic: https://mahmoudjaber11222-alt.github.io/global-islam-app/ar.html
+Anonymous HTTPS200 with certificate validation; EN/AR/CSS bytes match the publishing
+commit exactly. Source/private path probes404. Language links, anchors, HTML, UTF-8,
+RTL/responsive CSS and contrast checked. Browser/device visual verification remains
+separate; no browser-render or Android-native opening claim. privacy.json now has
+the actual URL and publishedAndVerifiedtrue. Only six static files uploaded.
+Run: https://github.com/mahmoudjaber11222-alt/global-islam-app/actions/runs/43920599153
+
+The policies explicitly disclose the live AI connectivity failure and unactivated
+automatic cleanup/daily backups. Publication does not mark Android release ready.
