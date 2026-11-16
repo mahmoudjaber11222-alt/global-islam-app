@@ -8,12 +8,10 @@
     "scheme": "globalislam",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "ios": {
       "icon": "./assets/icon.png",
       "supportsTablet": true
     },
-
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#FFFFFF",
@@ -29,15 +27,17 @@
       ],
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.globalislam.app"
+      "package": "com.globalislam.app",
+      "blockedPermissions": [
+        "android.permission.ACTIVITY_RECOGNITION",
+        "com.google.android.gms.permission.AD_ID"
+      ]
     },
-
     "web": {
       "output": "static",
       "favicon": "./assets/images/favicon.png",
       "bundler": "metro"
     },
-
     "plugins": [
       [
         "expo-speech-recognition",
@@ -67,21 +67,19 @@
           }
         }
       ],
-      "expo-font"
+      "expo-font",
+      "./plugins/withPrivacyDefaults.cjs"
     ],
-
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
     },
-
     "extra": {
       "router": {},
       "eas": {
         "projectId": "99a00235-d0a9-4f54-8028-926638b32fa7"
       }
     },
-
     "owner": "mahmoudjaber"
   }
 }

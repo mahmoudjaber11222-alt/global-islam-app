@@ -41,3 +41,10 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Secret files and private compliance output
+.env
+.env.*
+!.env.example
+!.env.sample
+.privacy-audit/

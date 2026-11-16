@@ -1,4 +1,4 @@
-ï»¿"""Checkpoint BEFORE deletion. Only an opaque digest is committed to the existing
+"""Checkpoint BEFORE deletion. Only an opaque digest is committed to the existing
 repository's recovery branch; no database, report, journal or encryption key.
 """
 import base64

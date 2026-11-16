@@ -1,0 +1,48 @@
+{
+  "intendedMinimumAge": 18,
+  "note": "Publication disclosure review only; not Google Play certification. Adults18+. Known hosting connectivity/automation/HTTP/native-release limitations remain explicitly disclosed or release-blocked.",
+  "policy": {
+    "providerDataHandlingEvidence": {
+      "complete": true,
+      "evidence": "2026-11-16 production a0a35d4 running on CPU-basic. DB_URL replacement TLS verified; old credential rejected. Cloudflare Mistral adapter active but live AI fails503 due in-Space ConnectTimeout to api.cloudflare.com; exact permission names not inferred from introspection403. Current policy explicitly states service limitation. Neon, HF, CF and other flows traced; provider-owned retention not asserted30d."
+    },
+    "retentionDeletionAndTraining": {
+      "complete": true,
+      "evidence": "Approved schedules clearly separated from operations. Actual encrypted production33576-byte snapshot verified; KV absolute30d expiry smoke404. Real PG restore/replay and KV stagingPASS. Production encrypted receiver/admin review/resolution90d verified. Automatic cleanup/daily backups remain disabled due hostCloudflare timeout and are explicitly disclosed as not operational. CF training statement attributed to official data-usage commitments, not blanket no-storage guarantee."
+    },
+    "accuratePolicyAndDataSafety": {
+      "complete": true,
+      "evidence": "EN/AR full14-section parity and exact owner/operator/contact, provider flows, live encrypted reports, known automation outage, approved-vs-operational retention, HTTP Tafsir, OSbackup and SDK configuration limits are disclosed without claiming Google Play readiness. Static publicallowlist, links and HTML checked. Website publication may proceed independently; app review flags remain blocked."
+    },
+    "adultAudienceAndAgeHandling": {
+      "complete": true,
+      "evidence": "Final18+ only. Live missing/forged grants, declared minor and obsolete policy rejected. Server-issued5min current-policy grant works; no identity/adulthood proof claim. Local gate/restart/oldapprovals testsPASS; native app release remains separately blocked."
+    }
+  },
+  "app": {
+    "backendEligibilityAndConsent": {
+      "complete": false,
+      "evidence": "Minimal adult self-declaration issuer implemented: opaque five-minute server grants, hashed persistence, current policy, expiry/revocation and issuer method validation; no age/DOB/identity evidence collected. Client eligible flag cannot authorize protected operations. Self-declaration cannot prove adulthood. Frontend acquisition tested; deployment remains unverified."
+    },
+    "aiModerationAndInAppReporting": {
+      "complete": false,
+      "evidence": "Live encrypted receipt/admin login/read/review/resolve/auditPASS after authorized password-preserving bcrypt conversion. Current production model connections time out fromHF; live generation/moderation regression blocked. Reporting receiver activation verified; AI release remains blocked."
+    },
+    "ageHandlingAndContentReview": {
+      "complete": false,
+      "evidence": "Local18+ boundary, persistence, render and provider-placement tests pass. No universal identity-verification requirement established. Final native startup, content and production declaration/grant verification remain incomplete."
+    },
+    "transportSecurity": {
+      "complete": false,
+      "evidence": "BLOCKED: mobile Tafsir remains HTTP. Offline pinned-corpus endpoint prepared/tested with synthetic data only; all10 licensed complete source corpora missing, no frontend switch. Candidate PG TLS now verifies CA/hostname; production not changed."
+    },
+    "releaseSdkAndPermissionAudit": {
+      "complete": false,
+      "evidence": "Source exclusions, FCM/Analytics defaults, Expo introspection and plugin idempotency pass. Direct Gradle release guard added. Fresh manifest build fails on Windows Gradle immutable-workspace moves even with isolated cache/no-watch-fs; no final binary/runtime collection claim."
+    },
+    "publicWebsiteAndAndroidVerification": {
+      "complete": false,
+      "evidence": "2026-11-16: public GitHub repo/admin access verified, preparation branch pushed, draftPR#1 website validation success. Pages configured build_type=workflow; no site deployment. Material policy facts remain unresolved. Browser access host unavailable, no connected Android device and no fresh signed artifact. Config remains blank/false."
+    }
+  }
+}
