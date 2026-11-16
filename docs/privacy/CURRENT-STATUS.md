@@ -26,27 +26,35 @@ server grants/revocation, encrypted report receipt/review/resolution, approved c
 independent deletion journal, restore replay, transaction rollback and password-
 preserving administrator hash conversion. This is not production verification.
 Cloudflare Free EN/AR synthetic moderation8/8 and grounded generation2/2PASS.
-Mistral Small3.1 adapter has no Gemini/paid fallback. Full corpus/safety/runtime
+Mistral Small3.1 adapter has no Gemini/paid fallback. Backend branch pushed safely;
+main and runtime remainc053c99. Full corpus/safety/runtime
 validation remains required. No blanket third-party age-ID mandate established;
 minimal self-declaration is not proof of adulthood. Server grants enforce access.
 
 Frontend working tree: TypeScript, existing tests,37-language and privacy/age/report/
 backend-contract testsPASS. Unrelated pre-existing UI work is preserved. Direct
-Gradle release guard now supplements EAS guard. Fresh manifest build fails on
-Windows immutable-cache workspace moves despite isolated cache/no-watch-fs. No new
-signedAAB, device/runtime verification, production reporting or provider activation.
+Gradle release guard now supplements EAS guard; an isolated Gradle dry-run verified
+that unresolved facts block release before signing. Fresh manifest build fails on
+Windows immutable-cache workspace moves despite isolated cache/no-watch-fs. No connected Android device was found. No new signedAAB, device/runtime verification,
+production reporting or provider activation.
 
 ## Deployment/publication gates
 
 Independent private persistent backup/journal storage and recovery keys remain
 unconfigured. Existing Workers AI token cannot access KV. Two separate KV namespaces
-with a namespace-scoped storage token are a possible Free solution pending access
-and implementation/testing, not an operating backup system. HF scratch is ephemeral.
+with separate restricted storage access are only a possible Free backup solution
+pending implementation/testing. KV is eventually consistent; do not use a mutable
+KV value as the sole authoritative deletion journal/checkpoint. HF scratch is ephemeral.
 Production admin hash conversion requires explicit approval and a verified backup.
 Original ten-source Tafsir still uses HTTP; available HTTPS corpus covers only2/10.
 No inaccurate source substitution or falsely secure HTTP-upstream proxy was made.
 
 Bilingual policies/guarded Pages preparation remain drafts, not published. GitHub
-repo is public; push/admin permissions verified; Pages not configured. Policy facts
+repo is public; prep branchd5c65c9 is pushed; draftPR#1 website validationPASS.
+Pages is configured for GitHub Actions, but no deployment occurred. Policy facts
 for current provider/log/storage practices remain incomplete. URL and all deployment/
 reporting activation flags stay blank/false until real verification. No Play rollout.
+
+GitHub PR: https://github.com/mahmoudjaber11222-alt/global-islam-app/pull/1
+Validation run: https://github.com/mahmoudjaber11222-alt/global-islam-app/actions/runs/43903453256
+Browser access host unavailable; no anonymous browser/layout claim.

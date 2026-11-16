@@ -42,7 +42,7 @@
     },
     "publicWebsiteAndAndroidVerification": {
       "complete": false,
-      "evidence": "BLOCKED publication/device: user made existing repo PUBLIC; authenticated and anonymous API verify it, free public GitHub Pages path available. No Pages site/deployment (has_pages=false/404), no policy URL. Factual policy gates fail; Android/runtime/live verification missing. Config remains blank/false."
+      "evidence": "2026-11-16: public GitHub repo/admin access verified, preparation branch pushed, draftPR#1 website validation success. Pages configured build_type=workflow; no site deployment. Material policy facts remain unresolved. Browser access host unavailable, no connected Android device and no fresh signed artifact. Config remains blank/false."
     }
   }
 }
