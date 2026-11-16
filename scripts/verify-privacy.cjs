@@ -29,7 +29,7 @@ for (const file of pages) {
       continue;
     }
     if (href.includes('://')) {
-      assert(['https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement', 'https://www.cloudflare.com/privacypolicy/'].includes(href), 'Unreviewed external link');
+      assert(['https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement', 'https://www.cloudflare.com/privacypolicy/', 'https://developers.cloudflare.com/workers-ai/platform/data-usage/'].includes(href), 'Unreviewed external link');
       continue;
     }
     const [target, fragment] = href.split('#');

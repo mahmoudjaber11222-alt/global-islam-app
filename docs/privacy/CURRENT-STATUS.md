@@ -1,60 +1,67 @@
-# Current verified status — 16 November 2026
+# Verified status — 16 November 2026
 
-Final audience: adults18+ only. Individual operator and AI report reviewer confirmed;
-public developer Mahmoud_Jaber.craft, privacy craftedbymahmoud@gmail.com.
-Approved retention: diagnostics30d; resolved reports90d after resolution; unresolved
-review30d/max180d; rolling backups30d; privacy requests30d or sooner by law; limited
-lawful exceptions; completed deletions reapplied after restoration. Do not reconfirm.
+Adults18+ only. Individual operator and personal report reviewer confirmed.
+Developer Mahmoud_Jaber.craft; privacy craftedbymahmoud@gmail.com. Approved retention
+decisions are final. Do not request credential rotation or policy confirmation again.
 
-## Production evidence
+Production HF main/runtime a0a35d40928662d7a52f4be8ffb831eeabfdde26, CPU-basic.
+Live health200; readiness503 intentionally blocked. Neon replacement DB_URL connects
+with verified TLS; old credential rejected. Additive schema applied twice, legacy
+accounts preserved. Owner-authorized bcrypt conversion changed one administrator's
+format, preserving the existing password; actual administrator login succeeds.
+No credential reset or user-record deletion. No reverting to plaintext authentication.
 
-Hugging Face remains c053c99085977c9efe831b9a714334c45e0f8977, RUNNING. Its DB code
-reads DB_URL and injected Space Secrets override bundled dotenv. The replacement
-Neon credential connects with verified client TLS; the old credential is rejected.
-The live database-backed /learn route returns200. No production records changed.
-Legacy production still uses Gemini/raw request logging; candidate privacy schema
-is absent. Neon CLI's current identity lists no accessible project, so control-plane
-backup/log/history settings remain unverified. Administrative password-format
-migration is necessary and separately approval-gated; no reset was performed.
+Live synthetic report passes receipt-after-commit, ciphertext verification,
+unauthorized denial, authenticated queue/read/review/resolution and audit. Expiry
+exactly90days after resolution. One clearly synthetic report retained under policy.
+Adult issuer works; missing/forged grants, declared minors and obsolete policies
+rejected. Short-lived hashed server grants are not proof of adulthood.
 
-## Tested candidate
+Cloudflare Mistral Small3.1 only; no Gemini/paid fallback. BOTH AI/storage requests
+from the actual Space fail ConnectTimeout to api.cloudflare.com:443; no diagnosed
+DNS or certificate-validation failure. Local APIs work. Exact token permission
+group names were not supplied; owner manually reviewed scopes. Introspection403
+is not invalid credentials and is not the release blocker. Inference and automatic
+recovery are blocked by actual host connectivity. Do not circumvent host controls.
 
-Backend preparation commit143d4ccab81862ceb1820062d886b5d4c475cd42 on
-privacy/adult-preparation preserves real upstream history.71 testsPASS. Disposable
-real PostgreSQL17/TLS stagingPASS: additive/idempotent schema and legacy preservation,
-server grants/revocation, encrypted report receipt/review/resolution, approved cleanup,
-independent deletion journal, restore replay, transaction rollback and password-
-preserving administrator hash conversion. This is not production verification.
-Cloudflare Free EN/AR synthetic moderation8/8 and grounded generation2/2PASS.
-Mistral Small3.1 adapter has no Gemini/paid fallback. Backend branch pushed safely;
-main and runtime remainc053c99. Full corpus/safety/runtime
-validation remains required. No blanket third-party age-ID mandate established;
-minimal self-declaration is not proof of adulthood. Server grants enforce access.
+83 backend testsPASS. Real isolated PostgreSQL17/TLS stagingPASS: additive/idempotent
+schema, legacy preservation, grants, encrypted review, retention/holds, bcrypt-format
+conversion preserving passwords, actual pg_restore and pinned deletion replay.
+Real synthetic KV4.8MB/two4MiB chunks verified and cleaned; expiry probe404.
+Actual encrypted production archive33576bytes verified by decrypt/hash roundtrip,
+schema listing and full data-block decompression without record output/plaintext
+file. Separate private KV namespaces/keys; only opaque digest committed on existing
+GitHub recovery branch. Private key recovery copy ACL-restricted and excluded fromGit.
+Archive limit16MiB, conservative project cap768MiB, absolute30day expiry, immutable
+digests and independent Git checkpoint before deletion. Missing/stale objects fail
+closed. Provider account quota remains hard stop; no paid fallback/billing change.
 
-Frontend working tree: TypeScript, existing tests,37-language and privacy/age/report/
-backend-contract testsPASS. Unrelated pre-existing UI work is preserved. Direct
-Gradle release guard now supplements EAS guard; an isolated Gradle dry-run verified
-that unresolved facts block release before signing. Fresh manifest build fails on
-Windows immutable-cache workspace moves despite isolated cache/no-watch-fs. No connected Android device was found. No new signedAAB, device/runtime verification,
-production reporting or provider activation.
+First live maintenance prepare failed closed; no report deletion authorized. GitHub
+main f223a081ba074bcd5aae2ed345dd769d926d94c9 has the reviewed hourly workflow/script.
+Scoped maintenance secret configured with explicit approval; activation variablefalse
+until actual Space job passes. No database/storage/recovery keys in Actions runner.
+Daily backups/cleanup are not operational and are explicitly disclosed in EN/AR.
+Provider-owned backup/log controls remain outside available Neon project access;
+only hostname region hint known, not a verified project-region setting. Application
+30day rule does not assert every provider copy follows it. Privacy requests remain
+the individual operator's manual responsibility30days or sooner by law.
 
-## Deployment/publication gates
+Frontend TypeScript/existing tests/37languages/91UIkeys/434locale paths/privacy-age-
+report-contract testsPASS. Receiver config points to actual verified report endpoint.
+Protected authorization required; deploymentVerifiedfalse while inference/recovery
+blocked. Unrelated pre-existing UI refactor preserved. No Google Play rollout.
+Policy publication review covers truthful current limitations; Android safeguards
+remain blocked. Record URLs only after actual PagesHTTPS verification.
 
-Independent private persistent backup/journal storage and recovery keys remain
-unconfigured. Existing Workers AI token cannot access KV. Two separate KV namespaces
-with separate restricted storage access are only a possible Free backup solution
-pending implementation/testing. KV is eventually consistent; do not use a mutable
-KV value as the sole authoritative deletion journal/checkpoint. HF scratch is ephemeral.
-Production admin hash conversion requires explicit approval and a verified backup.
-Original ten-source Tafsir still uses HTTP; available HTTPS corpus covers only2/10.
-No inaccurate source substitution or falsely secure HTTP-upstream proxy was made.
+Remaining actions: restore authorized HF HTTPS egress to api.cloudflare.com:443,
+rerun live EN/AR grounding/moderation and checkpointed maintenance, then enable and
+verify existing scheduler. Complete licensed/authenticated ten-source HTTPS Tafsir
+transport (current sources1/10 HTTPS fail; officialdump covers2/10 only). Obtain fresh
+signed Android artifact/runtime/SDK/permission evidence: Windows Gradle immutable
+workspace moves still fail, existing keys preserved, old AAB not fresh evidence.
 
-Bilingual policies/guarded Pages preparation remain drafts, not published. GitHub
-repo is public; prep branchd5c65c9 is pushed; draftPR#1 website validationPASS.
-Pages is configured for GitHub Actions, but no deployment occurred. Policy facts
-for current provider/log/storage practices remain incomplete. URL and all deployment/
-reporting activation flags stay blank/false until real verification. No Play rollout.
-
-GitHub PR: https://github.com/mahmoudjaber11222-alt/global-islam-app/pull/1
-Validation run: https://github.com/mahmoudjaber11222-alt/global-islam-app/actions/runs/43903453256
-Browser access host unavailable; no anonymous browser/layout claim.
+Rollback: reviewed descendant code only retaining bcrypt/current authorization and
+encryption. Never revert to exposed/plaintext legacy main. No database restore or
+historical deletion as code rollback. Actual restore must remain isolated through
+latest checkpoint replay and additive schema/hash-format validation. No further
+admin reset or destructive migration approval is pending.
