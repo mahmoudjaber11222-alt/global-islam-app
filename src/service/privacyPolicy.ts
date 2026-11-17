@@ -27,7 +27,7 @@ export function getPrivacyPolicyUrl(
 
 export async function openPrivacyPolicy(
   language: string,
-  open: (url: string) => Promise<unknown> = Linking.openURL,
+  open: (url: string) => Promise<unknown> = url => Linking.openURL(url),
   config: Configuration = configuration,
 ): Promise<PrivacyPolicyResult> {
   const url = getPrivacyPolicyUrl(language, config);
