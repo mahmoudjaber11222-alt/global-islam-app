@@ -1,6 +1,6 @@
 {
   "intendedMinimumAge": 18,
-  "note": "Publication disclosure review only; not Google Play certification. Adults18+. Known hosting connectivity/automation/HTTP/native-release limitations remain explicitly disclosed or release-blocked.",
+  "note": "Website and protected backend verified independently. Overall Android release remains blocked by the retained native/content/SDK/final-artifact and ten-source HTTP Tafsir reviews. No Google Play certification or upload.",
   "policy": {
     "providerDataHandlingEvidence": {
       "complete": true,
@@ -21,12 +21,12 @@
   },
   "app": {
     "backendEligibilityAndConsent": {
-      "complete": false,
-      "evidence": "Minimal adult self-declaration issuer implemented: opaque five-minute server grants, hashed persistence, current policy, expiry/revocation and issuer method validation; no age/DOB/identity evidence collected. Client eligible flag cannot authorize protected operations. Self-declaration cannot prove adulthood. Frontend acquisition tested; deployment remains unverified."
+      "complete": true,
+      "evidence": "2026-11-17 running protected backend validates opaque5min current18+grants from self-declaration; forged/missing/minor/legacy approvals rejected. Actual Neon grant/report operations and TLS verified; frontend grant memory/expiry/request-ordering and37language checksPASS. No third-party adulthood or identity proof claimed. Final native startup/content/SDK review remains separately incomplete."
     },
     "aiModerationAndInAppReporting": {
-      "complete": false,
-      "evidence": "Live encrypted receipt/admin login/read/review/resolve/auditPASS after authorized password-preserving bcrypt conversion. Current production model connections time out fromHF; live generation/moderation regression blocked. Reporting receiver activation verified; AI release remains blocked."
+      "complete": true,
+      "evidence": "2026-11-17 actual HF-to-Render-to-Cloudflare inference: English200 (858ac20), Arabic200 (624348b), current-policy servergrant201, missing401/forged403/minor403/obsolete400. Live input harmful EN/AR422; encrypted report receipt201, authenticated review200/resolution200 with90day expiry, unauthenticated review401.119 offline backend regressions include input/context/output denial and exact-source checks. Real KV4MiB/eight-reader testsPASS; fresh independently checkpointed encrypted backup/manual zero-report-delete maintenancePASS; readiness200. These bounded examples do not prove universal model safety or native runtime behavior."
     },
     "ageHandlingAndContentReview": {
       "complete": false,

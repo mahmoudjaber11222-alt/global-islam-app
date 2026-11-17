@@ -1,3 +1,34 @@
+# Verified status — 17 November 2026
+
+Production HF source/running f822b4544d631bdc198159a5ad3d5f795e2e5bbe.
+The restricted Render Free relay is active. Actual final English/Arabic answers200,
+adult grant201, readiness200 and authorized report review200. Temporary network,
+storage and safety probes were removed and now return404. No provider fallback,
+credential reset, destructive migration, paid plan or Google Play upload.
+
+119 backend testsPASS. Eight concurrent live4MiB synthetic ciphertext readsPASS;
+peak relay memory68,689,920bytes. HMAC, replay409, unauthorized401, expired401 and
+oversize413 checksPASS. Cold-start evidence is preserved, not re-created.
+Exact bounded retrieval excerpts and separately moderated generated explanations
+fix the oversized-context/duplicate-translation failures. Whole-request deadline120s;
+client125s; zero inference retries. These tests do not prove universal model safety.
+
+Fresh encrypted backup/roundtrip and independent Git checkpointPASS. The owner-
+approved first maintenance commit deleted zero reports/audits and five expired
+authorizations. Hourly automation remains disabled; no claim of ongoing daily backups.
+The operator's latest cleanup approval covered expired authorizations only.
+
+Published EN/AR Render disclosures verified anonymously over HTTPS, including
+current automation limitations. privacy.json retains the real verified Pages URL.
+Frontend production activation is now verified; unrelated local UI work is preserved.
+
+Android release remains BLOCKED by retained native/content/SDK/final-artifact review
+flags and unresolved ten-source HTTP Tafsir delivery. No new AAB was created and
+the old version1 artifact/keystore was not modified. Full app-release gate was not
+bypassed. Complete those reviews before a signed version2 candidate can be built.
+
+## Previous checkpoint
+
 # Verified status — 16 November 2026
 
 Adults18+ only. Individual operator and personal report reviewer confirmed.

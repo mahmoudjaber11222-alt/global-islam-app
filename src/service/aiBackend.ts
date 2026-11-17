@@ -65,7 +65,7 @@ export function getAiRequestContext(config: Configuration = configuration, now =
 }
 
 /** Accept only known error codes; never display/log arbitrary provider responses. */
-export async function postAiJson<T>(url: string, options: RequestInit, timeout = 60_000): Promise<T> {
+export async function postAiJson<T>(url: string, options: RequestInit, timeout = 125_000): Promise<T> {
   const parsed = new URL(url);
   if (parsed.origin !== 'https://global-islam5-islam-g-5.hf.space' ||
     !['/fatwa/', '/hadith/', '/eligibility/adult'].includes(parsed.pathname) || parsed.username || parsed.password || parsed.search || parsed.hash) {
